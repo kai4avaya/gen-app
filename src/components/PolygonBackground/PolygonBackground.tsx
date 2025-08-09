@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { generateRandomPolygonConfig, generateRandomGradient, PolygonConfig } from '../../utils/polygonGenerator';
 
 const BackgroundContainer = styled(Box)({
   position: 'absolute',
@@ -12,102 +13,132 @@ const BackgroundContainer = styled(Box)({
   zIndex: 0
 });
 
-const PolygonShape = styled(Box)<{ rotation?: number; scale?: number; opacity?: number }>(
-  ({ rotation = 0, scale = 1, opacity = 1 }) => ({
-    position: 'absolute',
-    width: '120vw',
-    height: '120vh',
-    opacity,
-    transform: `rotate(${rotation}deg) scale(${scale})`,
-    transformOrigin: 'center center',
-    clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)',
-    background: 'linear-gradient(135deg, #ffffff 0%, #fafafa 25%, #f5f5f5 50%, #f0f0f0 75%, #eeeeee 100%)',
-    boxShadow: `
-      inset 0 0 100px rgba(0, 0, 0, 0.02),
-      inset 0 0 200px rgba(0, 0, 0, 0.01),
-      0 0 50px rgba(255, 255, 255, 0.8)
-    `,
-    animation: 'float 20s ease-in-out infinite',
-    '@keyframes float': {
-      '0%, 100%': {
-        transform: `rotate(${rotation}deg) scale(${scale}) translateY(0px)`
-      },
-      '50%': {
-        transform: `rotate(${rotation}deg) scale(${scale}) translateY(-10px)`
-      }
+const PolygonShape = styled(Box)<{ 
+  config: PolygonConfig; 
+  gradient: string;
+  animationType: string;
+}>(({ config, gradient, animationType }) => ({
+  position: 'absolute',
+  width: '120vw',
+  height: '120vh',
+  top: config.position.top,
+  left: config.position.left,
+  opacity: config.opacity,
+  transform: `rotate(${config.rotation}deg) scale(${config.scale})`,
+  transformOrigin: 'center center',
+  clipPath: config.clipPath,
+  background: gradient,
+  boxShadow: `
+    inset 0 0 100px rgba(0, 0, 0, 0.02),
+    inset 0 0 200px rgba(0, 0, 0, 0.01),
+    0 0 50px rgba(255, 255, 255, 0.8)
+  `,
+  animation: `${animationType} ${20 + Math.random() * 10}s ease-in-out infinite ${config.animationDelay}s`,
+  '@keyframes float': {
+    '0%, 100%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(0px)`
+    },
+    '50%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(-10px)`
     }
-  })
-);
-
-const SecondaryPolygon = styled(Box)<{ rotation?: number; delay?: number }>(
-  ({ rotation = 0, delay = 0 }) => ({
-    position: 'absolute',
-    width: '80vw',
-    height: '80vh',
-    top: '10%',
-    left: '10%',
-    transform: `rotate(${rotation}deg)`,
-    transformOrigin: 'center center',
-    clipPath: 'polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%)',
-    background: 'linear-gradient(225deg, #fafafa 0%, #f8f8f8 30%, #f0f0f0 60%, #e8e8e8 100%)',
-    boxShadow: `
-      inset 0 0 80px rgba(0, 0, 0, 0.015),
-      inset 20px 20px 60px rgba(0, 0, 0, 0.01),
-      inset -20px -20px 60px rgba(255, 255, 255, 0.5)
-    `,
-    opacity: 0.7,
-    animation: `floatReverse 25s ease-in-out infinite ${delay}s`,
-    '@keyframes floatReverse': {
-      '0%, 100%': {
-        transform: `rotate(${rotation}deg) translateY(0px) translateX(0px)`
-      },
-      '33%': {
-        transform: `rotate(${rotation}deg) translateY(5px) translateX(-5px)`
-      },
-      '66%': {
-        transform: `rotate(${rotation}deg) translateY(-5px) translateX(5px)`
-      }
+  },
+  '@keyframes floatReverse': {
+    '0%, 100%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(0px) translateX(0px)`
+    },
+    '33%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(5px) translateX(-5px)`
+    },
+    '66%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(-5px) translateX(5px)`
     }
-  })
-);
+  },
+  '@keyframes pulse': {
+    '0%, 100%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale})`,
+      opacity: config.opacity
+    },
+    '50%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale * 1.02})`,
+      opacity: Math.min(1, config.opacity + 0.1)
+    }
+  }
+}));
 
-const InnerPolygon = styled(Box)({
+const SecondaryPolygon = styled(Box)<{ 
+  config: PolygonConfig; 
+  gradient: string;
+}>(({ config, gradient }) => ({
+  position: 'absolute',
+  width: '80vw',
+  height: '80vh',
+  top: config.position.top,
+  left: config.position.left,
+  transform: `rotate(${config.rotation}deg) scale(${config.scale})`,
+  transformOrigin: 'center center',
+  clipPath: config.clipPath,
+  background: gradient,
+  boxShadow: `
+    inset 0 0 80px rgba(0, 0, 0, 0.015),
+    inset 20px 20px 60px rgba(0, 0, 0, 0.01),
+    inset -20px -20px 60px rgba(255, 255, 255, 0.5)
+  `,
+  opacity: config.opacity,
+  animation: `floatReverse ${25 + Math.random() * 10}s ease-in-out infinite ${config.animationDelay}s`,
+  '@keyframes floatReverse': {
+    '0%, 100%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(0px) translateX(0px)`
+    },
+    '33%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(5px) translateX(-5px)`
+    },
+    '66%': {
+      transform: `rotate(${config.rotation}deg) scale(${config.scale}) translateY(-5px) translateX(5px)`
+    }
+  }
+}));
+
+const InnerPolygon = styled(Box)<{ 
+  config: PolygonConfig; 
+  gradient: string;
+}>(({ config, gradient }) => ({
   position: 'absolute',
   width: '60vw',
   height: '60vh',
-  top: '20%',
-  left: '20%',
-  clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-  background: 'radial-gradient(ellipse at center, #ffffff 0%, #fafafa 40%, #f5f5f5 70%, #f0f0f0 100%)',
+  top: config.position.top,
+  left: config.position.left,
+  clipPath: config.clipPath,
+  background: gradient,
   boxShadow: `
     inset 0 0 60px rgba(0, 0, 0, 0.02),
     inset 10px 10px 40px rgba(0, 0, 0, 0.008),
     inset -10px -10px 40px rgba(255, 255, 255, 0.6),
     0 0 30px rgba(255, 255, 255, 0.9)
   `,
-  opacity: 0.8,
-  animation: 'pulse 15s ease-in-out infinite',
+  opacity: config.opacity,
+  transform: `rotate(${config.rotation}deg) scale(${config.scale})`,
+  animation: `pulse ${15 + Math.random() * 5}s ease-in-out infinite ${config.animationDelay}s`,
   '@keyframes pulse': {
     '0%, 100%': {
-      transform: 'scale(1)',
-      opacity: 0.8
+      transform: `rotate(${config.rotation}deg) scale(${config.scale})`,
+      opacity: config.opacity
     },
     '50%': {
-      transform: 'scale(1.02)',
-      opacity: 0.9
+      transform: `rotate(${config.rotation}deg) scale(${config.scale * 1.02})`,
+      opacity: Math.min(1, config.opacity + 0.1)
     }
   }
-});
+}));
 
-const AmbientGlow = styled(Box)({
+const AmbientGlow = styled(Box)<{ intensity: number }>(({ intensity }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
   width: '150vw',
   height: '150vh',
   transform: 'translate(-50%, -50%)',
-  background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(250, 250, 250, 0.05) 30%, transparent 70%)',
-  animation: 'glow 30s ease-in-out infinite',
+  background: `radial-gradient(circle, rgba(255, 255, 255, ${0.1 * intensity}) 0%, rgba(250, 250, 250, ${0.05 * intensity}) 30%, transparent 70%)`,
+  animation: `glow ${30 + Math.random() * 10}s ease-in-out infinite`,
   '@keyframes glow': {
     '0%, 100%': {
       opacity: 0.3
@@ -116,16 +147,68 @@ const AmbientGlow = styled(Box)({
       opacity: 0.6
     }
   }
-});
+}));
 
 const PolygonBackground: React.FC = () => {
+  const [polygonConfigs, setPolygonConfigs] = useState<{
+    primary: PolygonConfig;
+    secondary1: PolygonConfig;
+    secondary2: PolygonConfig;
+    inner: PolygonConfig;
+  } | null>(null);
+
+  const [gradients, setGradients] = useState<{
+    primary: string;
+    secondary1: string;
+    secondary2: string;
+    inner: string;
+  } | null>(null);
+
+  const [glowIntensity, setGlowIntensity] = useState(1);
+
+  useEffect(() => {
+    // Generate random configurations on component mount
+    setPolygonConfigs({
+      primary: generateRandomPolygonConfig('primary'),
+      secondary1: generateRandomPolygonConfig('secondary'),
+      secondary2: generateRandomPolygonConfig('secondary'),
+      inner: generateRandomPolygonConfig('inner')
+    });
+
+    setGradients({
+      primary: generateRandomGradient(),
+      secondary1: generateRandomGradient(),
+      secondary2: generateRandomGradient(),
+      inner: generateRandomGradient()
+    });
+
+    setGlowIntensity(0.8 + Math.random() * 0.4); // Random intensity between 0.8 and 1.2
+  }, []);
+
+  if (!polygonConfigs || !gradients) {
+    return null; // Don't render until configs are generated
+  }
+
   return (
     <BackgroundContainer>
-      <AmbientGlow />
-      <PolygonShape rotation={15} scale={1.1} opacity={0.9} />
-      <SecondaryPolygon rotation={-10} delay={0} />
-      <SecondaryPolygon rotation={25} delay={5} />
-      <InnerPolygon />
+      <AmbientGlow intensity={glowIntensity} />
+      <PolygonShape 
+        config={polygonConfigs.primary} 
+        gradient={gradients.primary}
+        animationType="float"
+      />
+      <SecondaryPolygon 
+        config={polygonConfigs.secondary1} 
+        gradient={gradients.secondary1}
+      />
+      <SecondaryPolygon 
+        config={polygonConfigs.secondary2} 
+        gradient={gradients.secondary2}
+      />
+      <InnerPolygon 
+        config={polygonConfigs.inner} 
+        gradient={gradients.inner}
+      />
     </BackgroundContainer>
   );
 };
