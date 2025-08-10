@@ -1,31 +1,19 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, PaletteMode } from '@mui/material/styles';
 
-const theme = createTheme({
+export const createAppTheme = (mode: PaletteMode) => createTheme({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
-      main: '#333333',
-      contrastText: '#ffffff'
+      main: mode === 'light' ? '#333333' : '#ffffff',
+      contrastText: mode === 'light' ? '#ffffff' : '#000000'
     },
     background: {
-      default: '#fafafa',
-      paper: '#ffffff'
+      default: mode === 'light' ? '#fafafa' : '#121212',
+      paper: mode === 'light' ? '#ffffff' : '#1e1e1e'
     },
     text: {
-      primary: '#333333',
-      secondary: '#666666'
-    },
-    grey: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#f0f0f0',
-      300: '#eeeeee',
-      400: '#e8e8e8',
-      500: '#e0e0e0',
-      600: '#d5d5d5',
-      700: '#cccccc',
-      800: '#999999',
-      900: '#666666'
+      primary: mode === 'light' ? '#333333' : '#ffffff',
+      secondary: mode === 'light' ? '#666666' : '#aaaaaa'
     }
   },
   typography: {
@@ -56,4 +44,5 @@ const theme = createTheme({
   }
 });
 
+const theme = createAppTheme('light');
 export default theme;

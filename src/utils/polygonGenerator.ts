@@ -10,6 +10,9 @@ export interface PolygonConfig {
     top: string;
     left: string;
   };
+  // The base points (0-100 space) used to generate this polygon
+  // Keeping this enables concentric/inner shapes derived from the same base.
+  basePoints: number[][];
 }
 
 // Generate random number within range
@@ -26,6 +29,31 @@ const generatePolygonPoints = (basePoints: number[][], variation: number = 5): s
   });
   
   return `polygon(${randomizedPoints.join(', ')})`;
+};
+
+// Move each vertex towards the polygon centroid by a ratio (0..1)
+const insetPolygon = (points: number[][], ratio: number): number[][] => {
+  const cx = points.reduce((acc, [x]) => acc + x, 0) / points.length;
+  const cy = points.reduce((acc, [, y]) => acc + y, 0) / points.length;
+  return points.map(([x, y]) => [cx + (x - cx) * (1 - ratio), cy + (y - cy) * (1 - ratio)]);
+};
+
+// Export concentric clip-paths using the same base shape
+export const generateConcentricClipPaths = (
+  basePoints: number[][],
+  levels: number = 3,
+  variation: number = 3,
+  insetStep: number = 0.08
+): string[] => {
+  const clips: string[] = [];
+  let points = basePoints.map(([x, y]) => [x, y]);
+  for (let i = 0; i < levels; i++) {
+    // Slightly reduce noise deeper inside for cleaner inner silhouette
+    const v = Math.max(0, variation - i);
+    clips.push(generatePolygonPoints(points, v));
+    points = insetPolygon(points, insetStep);
+  }
+  return clips;
 };
 
 // Predefined polygon base shapes
@@ -54,7 +82,8 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(-5, 5)}%`,
           left: `${randomInRange(-5, 5)}%`
-        }
+  },
+  basePoints: baseShape
       };
       break;
       
@@ -68,7 +97,8 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(5, 15)}%`,
           left: `${randomInRange(5, 15)}%`
-        }
+  },
+  basePoints: baseShape
       };
       break;
       
@@ -82,7 +112,8 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(15, 25)}%`,
           left: `${randomInRange(15, 25)}%`
-        }
+  },
+  basePoints: baseShape
       };
       break;
   }
@@ -90,14 +121,23 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
   return config;
 };
 
-export const generateRandomGradient = (): string => {
-  const gradientTypes = [
-    'linear-gradient(135deg, #ffffff 0%, #fafafa 25%, #f5f5f5 50%, #f0f0f0 75%, #eeeeee 100%)',
-    'linear-gradient(225deg, #fafafa 0%, #f8f8f8 30%, #f0f0f0 60%, #e8e8e8 100%)',
-    'linear-gradient(45deg, #ffffff 0%, #f5f5f5 40%, #f0f0f0 70%, #eeeeee 100%)',
-    'radial-gradient(ellipse at center, #ffffff 0%, #fafafa 40%, #f5f5f5 70%, #f0f0f0 100%)',
-    'linear-gradient(315deg, #fafafa 0%, #f5f5f5 35%, #f0f0f0 65%, #e8e8e8 100%)'
+export const generateRandomGradient = (isDark: boolean = false): string => {
+  const lightGradients = [
+    'linear-gradient(135deg, #ffffff 0%, #f0f0f0 25%, #e0e0e0 50%, #d0d0d0 75%, #c0c0c0 100%)',
+    'linear-gradient(225deg, #f8f8f8 0%, #e8e8e8 30%, #d8d8d8 60%, #c8c8c8 100%)',
+    'linear-gradient(45deg, #ffffff 0%, #e5e5e5 40%, #d0d0d0 70%, #c0c0c0 100%)',
+    'radial-gradient(ellipse at center, #ffffff 0%, #f0f0f0 40%, #e0e0e0 70%, #d0d0d0 100%)',
+    'linear-gradient(315deg, #f8f8f8 0%, #e0e0e0 35%, #d0d0d0 65%, #c8c8c8 100%)'
   ];
   
+  const darkGradients = [
+    'linear-gradient(135deg, #505050 0%, #404040 25%, #353535 50%, #2a2a2a 75%, #1e1e1e 100%)',
+    'linear-gradient(225deg, #454545 0%, #3a3a3a 30%, #303030 60%, #252525 100%)',
+    'linear-gradient(45deg, #505050 0%, #353535 40%, #2a2a2a 70%, #1e1e1e 100%)',
+    'radial-gradient(ellipse at center, #505050 0%, #404040 40%, #353535 70%, #2a2a2a 100%)',
+    'linear-gradient(315deg, #454545 0%, #353535 35%, #2a2a2a 65%, #252525 100%)'
+  ];
+  
+  const gradientTypes = isDark ? darkGradients : lightGradients;
   return gradientTypes[Math.floor(Math.random() * gradientTypes.length)];
 };

@@ -1,0 +1,4135 @@
+<SYSTEM>This is the full developer documentation for LiveStore.</SYSTEM>
+
+# Start of LiveStore documentation
+
+# [Docs](https://docs.livestore.dev//)
+
+## Overview
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { LIVESTORE_WA_SQLITE_VERSION } from '../../../../CONSTANTS.ts'
+import { officeHours } from '../../../data.js'
+import { liveStoreVersion } from '@livestore/common'
+import NpmLink from '../../components/NpmLink.astro'
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Learn how to get started with LiveStore"
+    href="/getting-started/react-web"
+  />
+  <LinkCard
+    title="Evaluation"
+    description="Evaluate LiveStore for your use case"
+    href="/evaluation/design-decisions"
+  />
+  <LinkCard
+    title="Reference"
+    description="Reference documentation for LiveStore"
+    href="/reference/concepts"
+  />
+  <LinkCard
+    title="Patterns"
+    description="A collection of patterns for using LiveStore in different scenarios"
+    href="/patterns/anonymous-user-transition/"
+  />
+  <LinkCard
+    title="Community"
+    description="Community resources for LiveStore"
+    href="/misc/community"
+  />
+  <LinkCard
+    title="Contributing"
+    description="Contributing to LiveStore"
+    href="/contributing/contributing"
+  />
+</CardGrid>
+
+## State of the documentation
+
+Please note that the documentation is still work in progress with many parts missing and often only containing notes/bullet points.
+
+### Docs for LLMs
+
+We support the [llms.txt](https://llmstxt.org/) convention for making documentation available to large language models and the applications that make use of them.
+
+Currently, we have the following root-level files:
+
+- [/llms.txt](/llms.txt) — a listing of the available files
+- [/llms-full.txt](/llms-full.txt) — complete documentation for LiveStore
+
+### NPM packages
+
+- Main package: <NpmLink packageName="livestore" />
+- Framework integrations:
+  - React: <NpmLink packageName="react" />
+  - Solid: <NpmLink packageName="solid" />
+- Platform adapters:
+  - Web: <NpmLink packageName="adapter-web" />
+  - Expo: <NpmLink packageName="adapter-expo" />
+  - Node: <NpmLink packageName="adapter-node" />
+- Sync provider:
+  - Cloudflare: <NpmLink packageName="sync-cf" />
+  - Electric: <NpmLink packageName="sync-electric" />
+- Devtools:
+  - Vite: <NpmLink packageName="devtools-vite" />
+  - Expo: <NpmLink packageName="devtools-expo" />
+- SQLite WASM: <NpmLink packageName="wa-sqlite" version={LIVESTORE_WA_SQLITE_VERSION} />
+  - Note this package has a separate version from the rest of LiveStore
+- Internal packages:
+  - <NpmLink packageName="peer-deps" />
+  - <NpmLink packageName="utils" />
+  - <NpmLink packageName="common" />
+
+# [Contributing](https://docs.livestore.dev/contributing/contributing/)
+
+## Overview
+
+## Before contributing
+
+First of all, thank you for your interest in contributing to LiveStore! Building LiveStore has been an incredible amount of work, so everyone interested in contributing is very much appreciated. 🧡
+
+Please note that LiveStore is still in active development with many things yet subject to change (e.g. APIs, examples, docs, etc).
+
+Before you start contributing, please check with the maintainers if the changes you'd like to make are likely to be accepted. Please get in touch via the `#contrib` channel on [Discord](https://discord.gg/RbMcjUAPd7).
+
+## Areas for contribution
+
+There are many ways to contribute to LiveStore.
+
+### Help wanted for ...
+
+- You can look at ["help wanted" issues](https://github.com/livestorejs/livestore/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) on GitHub for ideas.
+- [SQLite WASM build](https://github.com/livestorejs/wa-sqlite) maintainer (e.g. keeping it up to date with upstream SQLite and wa-sqlite versions)
+- Examples maintainer (e.g. keeping dependencies & best practices up to date)
+- Solid integration maintainer (e.g. keeping it up to date with upstream Solid versions)
+
+### In scope and encouraged
+
+- Documentation improvements
+- Improving examples
+- Test cases
+- Bug fixes
+- Benchmarking
+
+### Potentially in scope
+
+- New features
+- Larger architectural changes in the core library
+- Adding new examples
+- Adding new integrations (e.g. for technologies such as Svelte, Vue, ...)
+- Monorepo setup changes
+- Changes to the docs site/setup
+
+### Out of scope (for now)
+
+- Changes to the landing page
+- Changes to the devtools
+- Rewriting the core library in a different language
+
+### Open research questions
+
+- Safer event schema evolution
+- Incremental view maintenance for complex SQLite database views
+
+Please get in touch if you'd like to discuss any of these topics!
+
+## Guiding principles {#guiding-principles}
+
+- Keep it as simple as possible
+- Reduce surface area
+- Make the right thing easy
+- Document the "why"
+
+# [Docs](https://docs.livestore.dev/contributing/docs/)
+
+## Overview
+
+Please follow LiveStore's [guiding principles](/contributing/contributing#guiding-principles) when writing docs.
+
+## Writing style
+
+This project broadly tries to follow the [Prisma docs style guide](https://www.prisma.io/docs/about/style-guide/writing-style).
+
+## Reusing code
+
+When including code snippets, please try to `import` the code from the source in order to avoid duplication.
+
+# [Monorepo](https://docs.livestore.dev/contributing/monorepo/)
+
+## Overview
+
+import { REACT_VERSION, EFFECT_VERSION } from '../../../../../CONSTANTS'
+
+## Prerequisites
+
+### Personal experience
+
+Depending on the kind of contribution you're interested in, the following experience is recommended:
+
+- Deep experience with TypeScript (incl. type-level programming)
+- Experience with TypeScript monorepo setups
+- Experience with distributed systems
+- Experience with [Effect](https://effect.website) (or willingness to learn)
+
+### Recommended tooling: Use Nix + direnv for a consistent development setup
+
+To make development as easy and consistent across systems and platforms, this project uses [Nix](https://zero-to-nix.com/) to manage "system dependencies" such as Node.js, Bun etc. You can either use [Direnv](https://direnv.net) setup (recommended) to automatically load the Nix env or manually use the Nix env (e.g. via `nix develop --command pnpm install`).
+
+### Manual setup
+
+You'll need to have a recent version the following tools installed:
+
+- Node.js
+- Bun
+- pnpm
+
+## Initial setup
+
+```bash
+git clone git@github.com:livestorejs/livestore.git
+cd livestore
+# Loads env vars, installs deps and builds the project
+./bootstrap.sh
+```
+
+## General notes
+
+- TypeScript
+  - LiveStore tries to follow the strictest TypeScript rules possible to ensure type safety and avoid subtle bugs.
+	- LiveStore also makes heavy use of [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html).
+- Package management
+  - This project uses [pnpm](https://pnpm.io/) to manage the workspace.
+- LiveStore is primarily developed in VSCode/Cursor.
+- Testing
+  - LiveStore uses Vitest for most tests and Playwright for browser tests.
+
+### Notable used tools / technologies
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [Effect](https://effect.website)
+- [pnpm](https://pnpm.io/)
+- [Bun](https://bun.sh/)
+- [Vitest](https://vitest.dev/)
+- [Playwright](https://playwright.dev/)
+- [OpenTelemetry](https://opentelemetry.io/)
+- [Nix](https://zero-to-nix.com/)
+- [Direnv](https://direnv.net/)
+
+### Environment variables
+
+The `.envrc` file contains all necessary environment variables for the project. You can create a `.envrc.local` file to override or add variables for your local setup. You'll need to run `direnv allow` to load the environment variables.
+
+### VSCode tasks
+
+- This project is primarily developed in VSCode and makes use of [tasks](https://code.visualstudio.com/docs/editor/tasks) to run commands.
+- Common tasks are:
+  - `dev:ts` to run the TypeScript compiler in watch mode for the entire monorepo
+  - `pnpm:install` to install all dependencies (e.g. when changing a `package.json`)
+
+## Examples
+
+- Once you've set up the monorepo locally, you'll notice both the `src` and `standalone` directories in `/examples`.
+- The `/examples/standalone` directory is meant as a starting point for app developers evaluating LiveStore and looking for a ready-to-run example app.
+- The `/examples/src` directory is meant for LiveStore maintainers and to run as part of the LiveStore monorepo. Compared to `/examples/standalone` it makes use of local linking features such a `workspace:*`, TypeScript `references` etc.
+- Both directories are kept in sync via `/examples/patches` and `/scripts/generate-examples.ts`. Usually it's recommended to work in `/examples/src` and generate the `/examples/standalone` version via `mono examples sync --direction src-to-standalone`.
+
+#### Making changes to examples
+
+1. Make your desired changes in `/examples/src`. (You might also need to update some of the patches in `/examples/patches`.)
+2. Run `mono examples sync --direction src-to-standalone` to generate the `/examples/standalone` version
+3. Check whether the changes in `/examples/standalone` are what you expected.
+4. Commit your changes in both `/examples/src` and `/examples/standalone` (and possibly `/examples/patches`). Note on GitHub, changes to `examples/standalone` are hidden by default.
+
+### OpenTelemetry setup
+
+As a local OpenTelemetry setup, we recommend the [docker-otel-lgtm](https://github.com/grafana/docker-otel-lgtm) setup.
+
+Add the following to your `.envrc.local` file:
+
+```bash
+export VITE_GRAFANA_ENDPOINT="http://localhost:30003"
+export GRAFANA_ENDPOINT="http://localhost:30003"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+export VITE_OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+```
+
+### TypeScript
+
+- Each package has its own `tsconfig.json` file which extends the root `tsconfig.base.json`.
+- This project makes heavy use of TypeScript project references.
+
+### Package management
+
+- This project uses [pnpm](https://pnpm.io/) to manage the workspace.
+- We're using the `workspace:*` protocol to link packages together.
+- We should try to keep dependencies to an absolute minimum and only add them if we absolutely need them.
+- We also need to manually add peer dependencies for each package.
+- We should try to avoid duplicate dependencies across the monorepo as much as possible as duplicate dependencies can lead to a lot of issues and pain.
+  - We're also using the `resolutions` field in the root `package.json` to force some packages to be the same across the monorepo (ideally not needed but for some packages it's necessary currently).
+- We're using [syncpack](https://github.com/JamieMason/syncpack) to help maintain consistent dependency versions across the monorepo.
+  - See `syncpack.config.mjs` for the configuration.
+  - Common commands:
+    - `bunx syncpack format` to format the `package.json` files
+    - `bunx syncpack lint` to check all version ranges
+    - `bunx syncpack fix-mismatches` to adjust versions across `package.json` files (check before with `lint`)
+    - `bunx syncpack update` to update packages across the monorepo to the latest versions
+
+### Notes on external dependencies
+
+LiveStore tries to use as few external dependencies as possible. Given LiveStore is built on top of Effect, which can be considered a standard library for TypeScript, it should handle most use cases.
+
+#### Notes on some packages
+
+The following packages need to be updated with extra care:
+- `react`/`react-dom` as we need to move in lockstep with Expo / React Native (currently pinned to {REACT_VERSION})
+- `effect` (currently pinned to {EFFECT_VERSION})
+
+#### Effect
+
+- LiveStore makes heavy use of the [Effect](https://effect.website) library and ecosystem throughout the implementation of the various packages.
+- Effect is not imposed on the app developers using LiveStore but where it makes sense, LiveStore is also exposing a Effect-based API (e.g. `createStore`).
+
+#### Updating dependencies
+
+- Either update the versions manually in each `package.json` file or use `bunx syncpack update`.
+
+### Notes on monorepo structure
+
+- The `@livestore/utils` package re-exports many common modules/functions (e.g. from `effect`) in order to
+  - Reduce the number of direct dependencies for other packages
+  - Allows for convenient extension of modules (e.g. adding methods to `Effect.___`, `Schema.___`, ...)
+
+## Docs
+
+The LiveStore docs are built with [Astro Starlight](https://starlight.astro.build/).
+
+## Related external repos
+
+- [Fork of wa-sqlite](https://github.com/livestorejs/wa-sqlite) and its [Nix build setup](https://github.com/livestorejs/wa-sqlite-build-env?tab=readme-ov-file).
+- The source code of the devtools is currently not part of this monorepo but in a separate private repo.
+
+# [AI agent](https://docs.livestore.dev/data-modeling/ai-agent/)
+
+## Overview
+
+LiveStore is a great fit for building AI agents. 
+
+TODO: actually write this section
+
+# [Complex UI state](https://docs.livestore.dev/data-modeling/complex-ui-state/)
+
+## Overview
+
+LiveStore is a great fit for building apps with complex UI state.
+
+TODO: actually write this section
+
+# [Data Modeling](https://docs.livestore.dev/data-modeling//)
+
+## Overview
+
+## Core idea
+
+- Data modeling is probably the most important part of any app and needs to be done carefully.
+- The core idea is to model the read and write model separately.
+- Depending on the use case, you might also want to split up the read/write model into separate "containers" (e.g. for data-sharing/scalability/access control reasons).
+  - There is no transactional consistency between containers.
+- Caveat: Event sourcing is not ideal for all use cases - some apps might be better off with another approach (e.g. use CRDTs for rich text editing).
+
+## Considerations for data modeling
+
+- How much data do you expect to have and what is the shape of the data?
+  - Some kind of data needs special handling (e.g. blobs or rich text)
+- Access patterns (performance, ...)
+- Access control
+- Data integrity / consistency
+- Sharing / collaboration
+- Regulatory requirements (e.g. GDPR, audit logs, ...)
+
+## TODO
+
+- TODO: actually write this section
+- questions to answer
+  - When to split things into separate containers?
+  - How do migrations work?
+    - Read model migrations
+    - Write model migrations
+      - How to create new write models based on existing ones
+        - Example: An app has multiple workspaces and you now want to introduce the concept of "projects" inside a workspace. You might want to pre-populate a "default workspace project" for each workspace.
+
+# [Todo app with shared workspaces](https://docs.livestore.dev/data-modeling/todo-workspaces/)
+
+## Overview
+
+import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Let's consider a fairly common application scenario: An app (in this case a todo app) with shared workspaces. For the sake of this guide, we'll keep things simple but you should be able to nicely extend this to a more complex app.
+
+## Requirements
+
+- There are multiple independent todo workspaces
+- Each workspace is initially created by a single user
+- Users can join the workspace by knowing the workspace id and get read and write access
+- For simplicity, the user identity is chosen when the app initially starts (i.e. a username) but in a real app this would be handled by a proper auth setup
+
+## Data model
+
+- We are splitting up our data model into two kinds of stores (with respective eventlogs and SQLite databases): The `workspace` store and the `user` store.
+
+### `workspace` store (one per workspace)
+
+For the `workspace` store we have the following events:
+
+- `workspaceCreated`
+- `todoAdded`
+- `todoCompleted`
+- `todoDeleted`
+- `userJoined`
+
+And the following state model:
+
+- `workspace` table (with a single row for the workspace itself)
+- `todo` table (with one row per todo item)
+- `member` table (with one row per user who has joined the workspace)
+
+### `user` store (one per user)
+
+For the `user` store we have the following events:
+
+- `workspaceCreated`
+- `workspaceJoined`
+
+And the following state model:
+
+- `user` table (with a single row for the user itself)
+
+Note that the `workspaceCreated` event is used both in the `workspace` and the `user` store. This is because each eventlog should be "self-sufficient" and not rely on other eventlogs to be present to fulfill its purpose.
+
+![](https://share.cleanshot.com/yCbKjvRP+)
+
+## Schema
+
+<Tabs>
+  <TabItem label="user-schema.ts">
+    <Code lang="ts" code={`\
+  import { Events, makeSchema, Schema, State } from '@livestore/livestore'
+
+  // Emitted when this user creates a new workspace
+  const workspaceCreated = Events.synced({
+    name: 'v1.ListCreated',
+    schema: Schema.Struct({ workspaceId: Schema.String }),
+  })
+
+  // Emitted when this user joins an existing workspace
+  const workspaceJoined = Events.synced({
+    name: 'v1.ListJoined',
+    schema: Schema.Struct({ workspaceId: Schema.String }),
+  })
+
+  const events = { workspaceCreated, workspaceJoined }
+
+  // Table to store basic user info
+  // Contains only one row as this store is per-user.
+  const userTable = State.SQLite.table({
+    name: 'user',
+    columns: {
+      // Assuming username is unique and used as the identifier
+      username: State.SQLite.text({ primaryKey: true }),
+    },
+  })
+
+  // Table to track which workspaces this user is part of
+  const userListTable = State.SQLite.table({
+    name: 'userList',
+    columns: {
+      workspaceId: State.SQLite.text({ primaryKey: true }),
+      // Could add role/permissions here later
+    },
+  })
+
+  const tables = { user: userTable, userList: userListTable }
+
+  const materializers = State.SQLite.materializers(events, {
+    // When the user creates or joins a workspace, add it to their workspace table
+    workspaceCreated: ({ workspaceId }) => tables.userList.insert({ workspaceId }),
+    workspaceJoined: ({ workspaceId }) => tables.userList.insert({ workspaceId }),
+  })
+
+  const state = State.SQLite.makeState({ tables, materializers })
+
+  export const schema = makeSchema({ events, state })
+    `} />
+  </TabItem>
+  <TabItem label="workspace-schema.ts">
+    <Code lang="ts" code={`\
+  import { Events, makeSchema, Schema, State } from '@livestore/livestore'
+
+  // Emitted when a new workspace is created (originates this store)
+  const workspaceCreated = Events.synced({
+    name: 'v1.ListCreated',
+    schema: Schema.Struct({
+      workspaceId: Schema.String,
+      name: Schema.String,
+      createdByUsername: Schema.String, 
+    }),
+  })
+
+  // Emitted when a todo item is added to this workspace
+  const todoAdded = Events.synced({
+    name: 'v1.TodoAdded',
+    schema: Schema.Struct({ todoId: Schema.String, text: Schema.String }),
+  })
+
+  // Emitted when a todo item is marked as completed
+  const todoCompleted = Events.synced({
+    name: 'v1.TodoCompleted',
+    schema: Schema.Struct({ todoId: Schema.String }),
+  })
+
+  // Emitted when a todo item is deleted (soft delete)
+  const todoDeleted = Events.synced({
+    name: 'v1.TodoDeleted',
+    schema: Schema.Struct({ todoId: Schema.String, deletedAt: Schema.Date }),
+  })
+
+  // Emitted when a new user joins this workspace
+  const userJoined = Events.synced({
+    name: 'v1.UserJoined',
+    schema: Schema.Struct({ username: Schema.String }),
+  })
+
+  const events = { workspaceCreated, todoAdded, todoCompleted, todoDeleted, userJoined }
+
+  // Table for the workspace itself (only one row as this store is per-workspace)
+  const workspaceTable = State.SQLite.table({
+    name: 'workspace',
+    columns: {
+      workspaceId: State.SQLite.text({ primaryKey: true }),
+      name: State.SQLite.text(),
+      createdByUsername: State.SQLite.text(),
+    },
+  })
+
+  // Table for the todo items in this workspace
+  const todoTable = State.SQLite.table({
+    name: 'todo',
+    columns: {
+      todoId: State.SQLite.text({ primaryKey: true }),
+      text: State.SQLite.text(),
+      completed: State.SQLite.boolean({ default: false }),
+      // Using soft delete by adding a deletedAt timestamp
+      deletedAt: State.SQLite.integer({ nullable: true, schema: Schema.DateFromNumber }),
+    },
+  })
+
+  // Table for members of this workspace
+  const memberTable = State.SQLite.table({
+    name: 'member',
+    columns: {
+      username: State.SQLite.text({ primaryKey: true }),
+      // Could add role/permissions here later
+    },
+  })
+
+  const tables = { workspace: workspaceTable, todo: todoTable, member: memberTable }
+
+  const materializers = State.SQLite.materializers(events, {
+    workspaceCreated: ({ workspaceId, name, createdByUsername }) => [
+      tables.workspace.insert({ workspaceId, name, createdByUsername }),
+      // Add the creator as the first member
+      tables.member.insert({ username: createdByUsername }),
+    ],
+    todoAdded: ({ todoId, text }) => tables.todo.insert({ todoId, text }),
+    todoCompleted: ({ todoId }) => tables.todo.update({ completed: true }).where({ todoId }),
+    todoDeleted: ({ todoId, deletedAt }) =>
+      tables.todo.update({ deletedAt }).where({ todoId }),
+    userJoined: ({ username }) => tables.member.insert({ username }),
+  })
+
+  const state = State.SQLite.makeState({ tables, materializers })
+
+  export const schema = makeSchema({ events, state })
+    `} />
+  </TabItem>
+</Tabs>
+
+## Further notes
+
+To make this app more production-ready, we might want to do the following:
+- Use a proper auth setup to enforce a trusted user identity
+- Introduce a proper user invite process
+- Introduce access levels (e.g. read-only, read-write)
+- Introduce end-to-end encryption
+- If each todo item has a lot of data (e.g. think of a GitHub/Linear issue with lots of details), it might make sense to split up each todo item into its own store.
+
+# [Turn-based game](https://docs.livestore.dev/data-modeling/turnbased-game/)
+
+## Overview
+
+LiveStore is a great fit for turn-based games. In this guide we'll look at a simple turn-based game and how to model it in LiveStore.
+
+General idea: Let server enforce the logic that each player only commits one action per turn.
+
+TODO: write rest of guide
+
+# [Design Decisions](https://docs.livestore.dev/evaluation/design-decisions/)
+
+## Overview
+
+## Goals
+
+- Fast, synchronous, transactional, and reactive state management
+- Global state is eventually consistent
+- Persistent storage
+- Syncing
+- Convenient schema migrations
+- Great devtools
+
+## Major Design Decisions
+
+- Based on [event-sourcing](/evaluation/event-sourcing) (implying a read/write model separation)
+- Using SQLite for state management over JavaScript implementations
+  - There are many benefits to using SQLite for state management, including performance, reliability, and ease of use.
+- Run in-memory SQLite in main-thread to enable synchronous queries
+  - Usually LiveStore is used with a second SQLite database for persistence running in a separate thread (e.g. web worker)
+  - Running SQLite additionally in the main-thread however also means each tab uses extra memory.
+- The current implementation of LiveStore assumes that the data is small enough to fit in memory. However, SQLite is very efficient so this should work for many use cases and apps.
+- LiveStore implements a Signals-based reactivity system based on the ideas of Adapton for incremental computation
+- The goal is to keep LiveStore syncing provider agnostic so you can use the right syncing provider for your use case.
+
+## Implementation decisions
+
+- Build most of the library in TypeScript. We might move more parts to Rust in the future.
+- Embrace and build on top of [Effect](https://effect.website) as a library of powerful primitives, particularly for IO/concurrency heavy parts of the library.
+
+## Original motivation
+
+- Frustration with database schema migrations -> event sourcing to separate read and write model (avoid schema migrations for read model)
+- Applying the "Make the right thing easy" principle to app data management
+
+# [Event Sourcing](https://docs.livestore.dev/evaluation/event-sourcing/)
+
+## Overview
+
+- Similar to Redux but persisted and synced across devices
+- Provides a more principled way to handle data instead of relying on mutable state
+- Core idea: Separate read vs write model
+  - Read model: App database (i.e. SQLite)
+  - Write model: Ordered log of all mutation events
+- Related topics
+  - Domain driven design
+- Benefits
+  - Simple mental model
+  - Preserves user intent
+  - Scalable
+  - Flexible
+    - You can easily evolve the read model based on your query patterns as your app requirements change over time
+  - Flexible merge conflicts resolution
+	- Automatic migrations of the read model (i.e. app database)
+    - Write model can also be evolved (e.g. via versioned mutations and optionally mapping old mutations to new ones)
+  - History of all state changes is captured (e.g. for auditing and debugging)
+	- Foundation for syncing
+- Downsides
+  - Slightly more boilerplate to manually define mutations
+  - Need to be careful so eventlog doesn't grow too much
+
+## LiveStore as an event-sourcing framework
+
+While the benefits of event sourcing are compelling, building a robust system from scratch is complex and time-consuming. Developers often encounter pitfalls related to data consistency, schema migrations, and efficient state reconstruction.
+
+LiveStore provides an off-the-shelf event sourcing solution designed for ease of use and correctness. It simplifies development by:
+
+- Providing clear APIs for defining mutations (events).
+- Automatically managing the event log persistence and ordering.
+- Efficiently recomputing the state (e.g. SQLite database) from the eventlog via materializers.
+- Handling complexities like automatic data migrations and offering strategies for conflict resolution during synchronization.
+
+This allows you to leverage the power of event sourcing without needing to implement the underlying infrastructure and tackle common edge cases yourself.
+
+## Further reading
+
+- [The Log: What every software engineer should know about real-time data's unifying abstraction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
+
+# [How LiveStore works](https://docs.livestore.dev/evaluation/how-livestore-works/)
+
+## Overview
+
+### TLDR
+
+LiveStore uses event sourcing to sync events across clients and materialize state into a local, reactive SQLite database.
+
+![](https://share.cleanshot.com/dTpVv5K1+)
+
+## How LiveStore Works Client-Side
+
+On the client, LiveStore provides a reactive SQLite database for application state, which is kept consistent through an underlying event sourcing mechanism.
+
+#### Local Reactive SQLite
+
+Application state is materialized into a local SQLite database, offering high-performance, offline-capable data access. This SQLite database is reactive: UI components subscribe to data changes and update automatically when the state changes. LiveStore uses in-memory SQLite for sub-millisecond queries and persistent SQLite for durable storage across application sessions.
+
+#### Event Sourcing
+
+Underpinning the reactive state, LiveStore implements the event sourcing pattern. All data modifications are captured as an immutable, ordered sequence of events. This eventlog serves as the canonical history, enabling reliable state reconstruction and providing inherent auditability, which aids in debugging. The reactive SQLite state is a projection of this eventlog.
+
+#### Client-Side Event Flow
+
+1.  **Event Committing:** User interactions within the application generate events detailing the specific action (e.g., `TodoCreated`, `TaskCompleted`).
+2.  **Local Persistence & Materialization:** The committed event is atomically persisted to the local eventlog and immediately materialized as state into the SQLite database.
+3.  **UI Reactivity:** Changes to the SQLite database trigger the reactivity system, causing subscribed UI components (e.g. React components) to automatically update and reflect the new state.
+
+## How LiveStore Syncing Works
+
+LiveStore extends its local event-sourcing model globally by synchronizing events across all clients, typically through a central sync backend. This ensures that the eventlog, serving as the single source of truth, is consistently replicated, leading to an eventually consistent state for all participants.
+
+#### Push/Pull Event Synchronization
+
+Inspired by Git, LiveStore employs a push/pull model for event synchronization. Clients must first pull the latest events from the sync backend to ensure their local eventlog is up-to-date before they can push their own newly committed local events. This model helps maintain a global total order of events. Local pending events that haven't been pushed are rebased on top of the latest upstream events before being pushed.
+
+#### Sync Provider Integration
+
+LiveStore supports various sync backend implementations, and it's straightforward for developers to create their own. The sync backend is responsible for storing events, enforcing the total event order, and notifying clients of new events.
+
+#### Conflict Resolution
+
+When concurrent operations from different clients lead to conflicting events, LiveStore defaults to a "last-write-wins" strategy. However, it also provides the capability for developers to implement custom merge conflict resolution logic tailored to their application's specific needs.
+
+#### Overall Syncing Data Flow
+
+After a local event is committed and materialized (as per the client-side flow), LiveStore attempts to push this event to the sync backend. Simultaneously, LiveStore is pulling events from the sync backend in the background.
+
+Two main scenarios can occur during a push attempt:
+
+1.  **Client In Sync:** If the client's local eventlog is already up-to-date with the sync backend (i.e., no new remote events have arrived since the last pull/push), the local event is pushed directly.
+2.  **Concurrent Incoming Events:** If new remote events have been pulled in the background, or are discovered during the push attempt, the client first processes these incoming remote events. Any local, unpushed events are then rebased on top of these new remote events before being pushed to the sync backend.
+
+In both scenarios, once remote events are received (either through background pulling or during a push cycle), they are persisted to the local eventlog, materialized into the local SQLite database, and the UI reacts to the new state, ensuring eventual consistency.
+
+## Platform Adapters
+
+LiveStore includes platform adapters to integrate with various environments, such as web browsers, mobile applications (iOS/Android), desktop applications, and Node.js.
+
+# [Performance](https://docs.livestore.dev/evaluation/performance/)
+
+## Overview
+
+LiveStore is designed with performance in mind. To ensure consistent speed and minimal resource consumption, we maintain a suite of performance tests that run automatically on every commit to `main` and every pull request. These tests help us detect regressions early and identify performance bottlenecks for implementing optimizations.
+
+## Performance tests
+
+Our current test suite focuses on two key metrics: **latency** and **memory usage**.
+
+We measure these two metrics across various user interaction scenarios on a minimal LiveStore+React test app.
+
+We select scenarios that help stress-test LiveStore’s ability to handle common underlying tasks that are part of common user interactions.
+
+To learn more about our testing methodology, check out the [README](https://github.com/livestorejs/livestore/blob/main/tests/perf/README.md) of our performance tests.
+
+> **Future expansions:** We [plan](https://github.com/livestorejs/livestore/blob/main/tests/perf/README.md#future-improvements) to measure throughput and bundle size, as well as expand the selection of scenarios and dimensions for the tests.
+
+## Latest test results
+
+You can view the latest performance test results on our [public dashboard](https://livestore.grafana.net/public-dashboards/4a9a3b7941464bcebbc0fa2cdddc3130).
+
+Otherwise, you can view the latest test results by inspecting the logs of the `perf-test` job in our [GitHub Actions workflow](https://github.com/livestorejs/livestore/actions/workflows/ci.yml).
+
+## Reporting a performance issue
+
+We’re committed to transparency and continuous improvement. If you find performance gaps or regressions in your own usage, please [file an issue](https://github.com/livestorejs/livestore/issues/new)
+
+# [State of the project](https://docs.livestore.dev/evaluation/state-of-the-project/)
+
+## Overview
+
+LiveStore is based on years of research (see [Riffle](https://riffle.systems/essays/prelude/)) and is used as the foundation for ambitious apps such as [Overtone](https://overtone.pro). LiveStore has been in development since 2021 and is making good progress towards a stable release. LiveStore is not yet ready for all production scenarios.
+
+## Current state
+
+LiveStore is currently in **beta** with most APIs being fairly stable (there might still be some breaking changes in coming releases). Most work is currently focussed on reliability and performance improvements.
+
+There is currently no specific timeline for a 1.0 release but we are making good progress in that direction.
+
+### On breaking changes
+
+While LiveStore is in beta there can be three kinds of breaking changes:
+
+- Breaking API changes
+- Client storage format changes (whenever `liveStoreStorageFormatVersion` is updated)
+- Sync backend storage format changes (e.g. when a sync backend implementation changes the way how it stores data)
+
+We try our best to minimize breaking changes and to provide a migration path whenever possible.
+
+## Roadmap
+
+See [GitHub issues](https://github.com/livestorejs/livestore/issues) for more details. Get in touch if you have any questions or feedback.
+
+### 2025 Q3
+
+- Adapter bug fixes & stability improvements
+- Performance improvements
+  - Syncing latency & throughput
+- More testing
+
+### Long-term
+
+- Eventlog compaction [#136](https://github.com/livestorejs/livestore/issues/136)
+- Support more syncing providers
+- Support more framework integrations
+- Support more platforms (e.g. Electron, Tauri)
+
+# [When to use LiveStore (and when not)](https://docs.livestore.dev/evaluation/when-livestore/)
+
+## Overview
+
+Choosing a data layer for a local-first app is a big decision and should be considered carefully.  On a high level, LiveStore can be a good fit if ...
+- you are looking for a principled data layer that works across platforms
+- you want to use SQLite for your queries
+- you like [event sourcing](/evaluation/event-sourcing) to model data changes
+- you are working on a new app as LiveStore doesn't yet provide a way to [re-use an existing database](/misc/faq#existing-database)
+- the current [state of the project](/evaluation/state-of-the-project) aligns with your own timeline and requirements
+
+## Evaluation exercise
+
+A great way to evaluate whether LiveStore is a good fit for your application, is by trying to model your application events (and optionally state) schema. This exercise can be done in a few minutes and can give you a good indication of whether LiveStore is a good fit for your application.
+
+### Example: Calendar/scheduling app
+
+Let's say you are building a calendar/scheduling app, your events might include:
+
+- `AppointmentScheduled`
+- `AppointmentRescheduled`
+- `AppointmentCancelled`
+- `ParticipantInvitedToAppointment`
+- `ParticipantRespondedToInvite`
+
+From this you might want to derive the following state (modeled as SQLite tables):
+
+- `Appointment`
+  - `id`
+  - `title`
+  - `description`
+  - `participants`
+- `Participant`
+  - `id`
+  - `name`
+  - `email`
+
+## Great use cases for LiveStore
+
+- High-performance desktop/web/mobile apps
+  - e.g. productivity apps like 
+- AI agents
+- Apps that need ...
+  - solid offline support
+  - audit logs
+
+## Benefits of LiveStore
+
+- Unified data layer combining local reactive state with globally synced data
+- Easy to ...
+  - reason about
+  - debug
+  - test
+  - evolve
+  - operate
+
+## Reasons when not to use LiveStore
+
+- You have an existing database which is the source of truth of your data. (Better use [Zero](https://zero.rocicorp.dev) or [ElectricSQL](https://www.electricsql.com) for this.)
+- Your app data is highly connected across users (like a social network / marketplace / etc.) or modeling your data via read-write model separation/event sourcing doesn't seem feasible.
+- You want to build a more traditional client-server application with your primary data source being a remote server.
+- You want a full-stack batteries-included solution (e.g. auth, storage, etc.). (Technologies like [Jazz](https://jazz.tools) or [Instant](https://instantdb.com) might be a better fit.)
+- You don't like to model your data via read-write model separation/event sourcing or the trade-offs it involves.
+- You're a new developer and are just getting started. LiveStore is a relatively advanced technology with many design trade-offs that might make most sense after you have already experienced some of the problems LiveStore is trying to solve.
+- You want to keep your app bundle size as small as possible. LiveStore adds a few hundred kB to your app bundle size (mostly due to bundling SQLite).
+
+## Considerations
+
+### Database constraints
+
+- All the client app data should fit into a in-memory SQLite database
+  - Depending on the target device having databases up to 1GB in size should be okay.
+  - If you you have more data, you can consider segmenting your database into multiple SQLite database (e.g. segmented per project, workspace, document, ...).
+  - You can either use the `storeId` option for the segmentation or there could also be a way to use the [SQLite attach feature](https://www.sqlite.org/lang_attach.html) to dynamically attach/detach databases.
+
+### Syncing
+
+LiveStore's syncing system is designed for small/medium-level concurrency scenarios (e.g. 10s / low 100s of users collaborating on the same thing for a given eventlog).
+  - Collaboration on multiple different eventlogs concurrently is supported and should be used to "scale horizontally".
+
+### Other considerations
+
+- How data flows / what's the source of truth?
+
+# [Technology comparison](https://docs.livestore.dev/evaluation/technology-comparison/)
+
+## Overview
+
+## TLDR of what sets LiveStore apart
+
+- Uses combination of reactive, in-memory + synced, persisted SQLite for instant, synchronous queries
+- Based on event-sourcing methodologies
+- Client-centric (with great devtools)
+
+## Other local-first/syncing technologies
+
+To compare LiveStore with other local-first/syncing technologies, please see the [Local-First Landscape](https://www.localfirst.fm/landscape) resource.
+
+## LiveStore vs Redux
+
+LiveStore shares a lot of similarities with Redux in that sense that both are based on event-sourcing methodologies. Let's compare some of the core concepts:
+
+- Redux actions are similar to LiveStore events: Both are used to describe "things that have happened"
+- Redux views are similar to LiveStore's state (e.g. SQLite tables): Both are derived from the history of events/actions.
+  - A major difference here is that LiveStore's state materialized as a SQLite database allows for a lot more flexibility via dynamic queries and aggregations vs Redux's static views.
+- Redux reducers are similar to LiveStore's materializers: Both are used to transform events/actions into a final state.
+- Both Redux and LiveStore are client-centric.
+- Both Redux and LiveStore provide powerful [devtools](/reference/devtools).
+
+While LiveStore can be used for the same use cases as Redux, LiveStore goes far Redux in the following ways:
+
+- LiveStore leverages SQLite for a more powerful state model allowing for flexible queries and aggregations with much simpler materialization logic.
+- LiveStore support client-persistence out of the box.
+- LiveStore comes with a built-in [sync engine](/reference/syncing) syncing events between clients.
+
+As a downside compared to Redux, LiveStore has a slightly larger bundle size.
+
+## Other state management libraries
+
+- Zustand
+- Redux Toolkit (RTK)
+- MobX
+- Jotai
+- Xstate
+- Recoil
+- React Query
+
+# [Expo](https://docs.livestore.dev/getting-started/expo/)
+
+## Overview
+
+import { Code, Steps, Tabs, TabItem } from '@astrojs/starlight/components'
+import { makeTiged, versionNpmSuffix } from '../../../../data.js'
+import { MIN_NODE_VERSION } from '../../../../../CONSTANTS.ts'
+import babelConfigCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/babel.config.js?raw'
+import metroConfigCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/metro.config.js?raw'
+import schemaCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/src/livestore/schema.ts?raw'
+import rootCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/src/Root.tsx?raw'
+import headerCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/src/components/NewTodo.tsx?raw'
+import mainSectionCode from '../../../../../examples/standalone/expo-todomvc-sync-cf/src/components/ListTodos.tsx?raw'
+
+export const CODE = {
+  babelConfig: babelConfigCode,
+  metroConfig: metroConfigCode,
+  schema: schemaCode,
+  root: rootCode,
+  header: headerCode,
+  mainSection: mainSectionCode,
+}
+
+{/* We're adjusting the package to use the dev version on the dev branch */}
+export const manualInstallDepsStr = [
+  '@livestore/devtools-expo' + versionNpmSuffix,
+  '@livestore/adapter-expo' + versionNpmSuffix,
+  '@livestore/livestore' + versionNpmSuffix,
+  '@livestore/react' + versionNpmSuffix,
+  '@livestore/sync-cf' + versionNpmSuffix,
+  '@livestore/peer-deps' + versionNpmSuffix,
+  'expo-sqlite',
+].join(' ')
+
+### Prerequisites
+
+- Recommended: Bun 1.2 or higher
+- Node.js {MIN_NODE_VERSION} or higher
+
+To use [LiveStore](/) with [Expo](https://docs.expo.dev/), ensure your project has the [New Architecture](https://docs.expo.dev/guides/new-architecture/) enabled. This is required for transactional state updates.
+
+### Option A: Quick start
+
+For a quick start we recommend using our template app following the steps below.
+
+For existing projects see [Existing project setup](#existing-project-setup).
+
+<Steps>
+
+1.  **Set up project from template**
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        <Code code={makeTiged('expo-todomvc-sync-cf', 'bunx')} lang="sh" />
+      </TabItem>
+      <TabItem label="pnpm">
+        <Code code={makeTiged('expo-todomvc-sync-cf', 'pnpm dlx')} lang="sh" />
+      </TabItem>
+      <TabItem label="npm">
+        <Code code={makeTiged('expo-todomvc-sync-cf', 'npx')} lang="sh" />
+      </TabItem>
+      <TabItem label="yarn">
+        <Code code={makeTiged('expo-todomvc-sync-cf', 'yarn dlx')} lang="sh" />
+      </TabItem>
+    </Tabs>
+
+    Replace `livestore-app` with your desired app name.
+
+2.  **Install dependencies**
+
+    It's strongly recommended to use `bun` or `pnpm` for the simplest and most reliable dependency setup (see [note on package management](/misc/package-management) for more details).
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        ```bash
+        bun install
+        ```
+      </TabItem>
+      <TabItem label="pnpm">
+        ```bash
+        pnpm install --node-linker=hoisted
+        ```
+
+        Make sure to use `--node-linker=hoisted` when installing dependencies in your project or add it to your `.npmrc` file.
+        ```
+        # .npmrc
+        nodeLinker=hoisted
+        ```
+
+        Hopefully Expo will also support non-hoisted setups in the future.
+      </TabItem>
+      <TabItem label="npm">
+        ```bash
+        npm install
+        ```
+      </TabItem>
+      <TabItem label="yarn">
+        When using `yarn`, make sure you're using Yarn 4 or higher with the `node-modules` linker.
+
+        ```bash
+        yarn set version stable
+        yarn config set nodeLinker node-modules
+        yarn install
+        ```
+      </TabItem>
+    </Tabs>
+
+    Pro tip: You can use [direnv](https://direnv.net/) to manage environment variables.
+
+3.  **Run the app**
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        <Code code="bun start" lang="sh" />
+      </TabItem>
+      <TabItem label="pnpm">
+        <Code code="pnpm start" lang="sh" />
+      </TabItem>
+      <TabItem label="npm">
+        <Code code="npm run start" lang="sh" />
+      </TabItem>
+      <TabItem label="yarn">
+        <Code code="yarn start" lang="sh" />
+      </TabItem>
+    </Tabs>
+
+    In a new terminal, start the Cloudflare Worker (for the sync backend):
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        <Code code="bun wrangler:dev" lang="sh" />
+      </TabItem>
+      <TabItem label="pnpm">
+        <Code code="pnpm wrangler:dev" lang="sh" />
+      </TabItem>
+      <TabItem label="npm">
+        <Code code="npm run wrangler:dev" lang="sh" />
+      </TabItem>
+      <TabItem label="yarn">
+        <Code code="yarn wrangler:dev" lang="sh" />
+      </TabItem>
+    </Tabs>
+</Steps>
+
+### Option B: Existing project setup \{#existing-project-setup\}
+
+<Steps>
+
+1.  **Install dependencies**
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        <Code code={'bun install ' + manualInstallDepsStr} lang="sh" />
+      </TabItem>
+      <TabItem label="pnpm">
+        <Code code={'pnpm install ' + manualInstallDepsStr} lang="sh" />
+      </TabItem>
+      <TabItem label="npm">
+        <Code code={'npm install ' + manualInstallDepsStr} lang="sh" />
+      </TabItem>
+      <TabItem label="yarn">
+        <Code code={'yarn add ' + manualInstallDepsStr} lang="sh" />
+      </TabItem>
+    </Tabs>
+
+2.  **Add Vite meta plugin to babel config file**
+
+    LiveStore Devtools uses Vite. This plugin emulates Vite's `import.meta.env` functionality.
+
+    <Tabs syncKey="package-manager">
+      <TabItem label="bun">
+        <Code code="bun add -d babel-plugin-transform-vite-meta-env" lang="sh" />
+      </TabItem>
+      <TabItem label="pnpm">
+        <Code code="pnpm add -D babel-plugin-transform-vite-meta-env" lang="sh" />
+      </TabItem>
+      <TabItem label="yarn">
+        <Code code="yarn add -D babel-plugin-transform-vite-meta-env" lang="sh" />
+      </TabItem>
+      <TabItem label="npm">
+        <Code code="npm install --save-dev babel-plugin-transform-vite-meta-env" lang="sh" />
+      </TabItem>
+    </Tabs>
+
+    In your `babel.config.js` file, add the plugin as follows:
+
+    <Code code={CODE.babelConfig} lang="js" title="babel.config.js" />
+
+3.  **Update Metro config**
+
+    Add the following code to your `metro.config.js` file:
+
+    <Code code={CODE.metroConfig} lang="js" title="metro.config.js" />
+
+</Steps>
+
+## Define Your Schema
+
+Create a file named `schema.ts` inside the `src/livestore` folder. This file defines your LiveStore schema consisting of your app's event definitions (describing how data changes), derived state (i.e. SQLite tables), and materializers (how state is derived from events).
+
+Here's an example schema:
+
+<Code code={CODE.schema} lang="ts" title="src/livestore/schema.ts" />
+
+## Add the LiveStore Provider
+
+To make the LiveStore available throughout your app, wrap your app's root component with the `LiveStoreProvider` component from `@livestore/react`. This provider manages your app’s data store, loading, and error states.
+
+Here's an example:
+
+<Code code={CODE.root} lang="tsx" title="src/Root.tsx" />
+
+### Commit events
+
+After wrapping your app with the `LiveStoreProvider`, you can use the `useStore` hook from any component to commit events.
+
+Here's an example:
+
+<Code code={CODE.header} lang="tsx" title="src/components/NewTodo.tsx" />
+
+## Queries
+
+To retrieve data from the database, first define a query using `queryDb` from `@livestore/livestore`. Then, execute the query with the `useQuery` hook from `@livestore/react`.
+
+Consider abstracting queries into a separate file to keep your code organized, though you can also define them directly within components if preferred.
+
+Here's an example:
+
+<Code code={CODE.mainSection} lang="tsx" title="src/components/ListTodos.tsx" />
+
+## Devtools
+
+To open the devtools, run the app and from your terminal press `shift + m`, then select LiveStore Devtools and press `Enter`.
+
+![Expo Terminal Screenshot](../../../assets/devtools-terminal-expo.png)
+
+This will open the devtools in a new tab in your default browser.
+
+![Devtools Browser Screenshot](../../../assets/devtools-browser-view.png)
+
+Use the devtools to inspect the state of your LiveStore database, execute events, track performance, and more.
+
+## Database location
+
+### With Expo Go
+
+To open the database in Finder, run the following command in your terminal:
+
+```bash
+open $(find $(xcrun simctl get_app_container booted host.exp.Exponent data) -path "*/Documents/ExponentExperienceData/*livestore-expo*" -print -quit)/SQLite
+```
+
+### With development builds
+
+For development builds, the app SQLite database is stored in the app's Library directory.
+
+Example:
+`/Users/<USERNAME>/Library/Developer/CoreSimulator/Devices/<DEVICE_ID>/data/Containers/Data/Application/<APP_ID>/Documents/SQLite/app.db`
+
+To open the database in Finder, run the following command in your terminal:
+
+```bash
+open $(xcrun simctl get_app_container booted [APP_BUNDLE_ID] data)/Documents/SQLite
+```
+
+Replace `[APP_BUNDLE_ID]` with your app's bundle ID. e.g. `dev.livestore.livestore-expo`.
+
+## Further notes
+
+- LiveStore doesn't yet support Expo Web (see [#130](https://github.com/livestorejs/livestore/issues/130))
+
+# [Examples](https://docs.livestore.dev/examples//)
+
+## Overview
+
+## Explore all examples
+
+[View all examples](https://github.com/livestorejs/livestore/tree/main/examples/standalone)
+
+## Hosted demos
+
+### Web
+
+- [TodoMVC React](https://web-todomvc.livestore.dev) / [Source](https://github.com/livestorejs/livestore/tree/main/examples/standalone/web-todomvc)
+- [TodoMVC React + Sync CF](https://web-todomvc-sync-cf.livestore.dev) / [Source](https://github.com/livestorejs/livestore/tree/main/examples/standalone/web-todomvc-sync-cf)
+- [Linearlite React](https://web-linearlite.livestore.dev) / [Source](https://github.com/livestorejs/livestore/tree/main/examples/standalone/web-linearlite)
+
+# [Node](https://docs.livestore.dev/getting-started/node/)
+
+## Overview
+
+import { Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
+import { makeTiged } from '../../../../data.js'
+
+## Minimal example
+
+```ts
+import { makeAdapter } from '@livestore/adapter-node'
+import { createStorePromise } from '@livestore/livestore'
+import { tables, schema } from './livestore/schema.js'
+
+const adapter = makeAdapter({
+  storage: { type: 'fs' },
+  // sync: { backend: makeCfSync({ url: '...' }) },
+})
+
+const store = await createStorePromise({ adapter, schema })
+
+const todos = store.query(tables.todos)
+```
+
+### Option A: Quick start
+
+For a quick start, we recommend using our template app following the steps below.
+
+{/* For existing projects, see [Existing project setup](#existing-project-setup). */}
+
+<Steps>
+
+1. **Set up project from template**
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code={makeTiged('node-todomvc-sync-cf', 'bunx')} lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code={makeTiged('node-todomvc-sync-cf', 'pnpm dlx')} lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code={makeTiged('node-todomvc-sync-cf', 'npx')} lang="sh" />
+     </TabItem>
+   </Tabs>
+
+   Replace `livestore-app` with your desired app name.
+
+2. **Install dependencies**
+
+   It's strongly recommended to use `bun` or `pnpm` for the simplest and most reliable dependency setup (see [note on package management](/misc/package-management) for more details).
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code="bun install" lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code="pnpm install" lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code="npm install" lang="sh" />
+     </TabItem>
+   </Tabs>
+
+   Pro tip: You can use [direnv](https://direnv.net/) to manage environment variables.
+
+3. **Run dev environment**
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code="bun start" lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code="pnpm start" lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code="npm run start" lang="sh" />
+     </TabItem>
+   </Tabs>
+
+</Steps>
+
+# [Getting started with LiveStore + React](https://docs.livestore.dev/getting-started/react-web/)
+
+## Overview
+
+import { Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
+import { makeTiged, versionNpmSuffix } from '../../../../data.js'
+import { MIN_NODE_VERSION, LIVESTORE_WA_SQLITE_VERSION } from '../../../../../CONSTANTS.ts'
+import viteConfigCode from '../../../../../examples/standalone/web-todomvc-sync-cf/vite.config.js?raw'
+import schemaCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/livestore/schema.ts?raw'
+import workerCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/livestore.worker.ts?raw'
+import rootCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/Root.tsx?raw'
+import headerCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/components/Header.tsx?raw'
+import mainSectionCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/components/MainSection.tsx?raw'
+
+export const CODE = {
+  viteConfig: viteConfigCode,
+  schema: schemaCode,
+  worker: workerCode,
+  root: rootCode,
+  header: headerCode,
+  mainSection: mainSectionCode,
+}
+
+{/* We're adjusting the package to use the dev version on the dev branch */}
+export const manualInstallDepsStr = [
+  '@livestore/livestore' + versionNpmSuffix,
+  '@livestore/wa-sqlite@' + LIVESTORE_WA_SQLITE_VERSION,
+  '@livestore/adapter-web' + versionNpmSuffix,
+  '@livestore/react' + versionNpmSuffix,
+  '@livestore/peer-deps' + versionNpmSuffix,
+  '@livestore/sync-cf' + versionNpmSuffix,
+  '@livestore/devtools-vite' + versionNpmSuffix,
+].join(' ')
+
+## Prerequisites
+
+- Recommended: Bun 1.2 or higher
+- Node.js {MIN_NODE_VERSION} or higher
+
+### Option A: Quick start
+
+For a quick start, we recommend using our template app following the steps below.
+
+For existing projects, see [Existing project setup](#existing-project-setup).
+
+<Steps>
+
+1. **Set up project from template**
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code={makeTiged('web-todomvc-sync-cf', 'bunx')} lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code={makeTiged('web-todomvc-sync-cf', 'pnpm dlx')} lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code={makeTiged('web-todomvc-sync-cf', 'npx')} lang="sh" />
+     </TabItem>
+   </Tabs>
+
+   Replace `livestore-app` with your desired app name.
+
+2. **Install dependencies**
+
+   It's strongly recommended to use `bun` or `pnpm` for the simplest and most reliable dependency setup (see [note on package management](/misc/package-management) for more details).
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code="bun install" lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code="pnpm install" lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code="npm install" lang="sh" />
+     </TabItem>
+   </Tabs>
+
+   Pro tip: You can use [direnv](https://direnv.net/) to manage environment variables.
+
+3. **Run dev environment**
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code="bun dev" lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code="pnpm dev" lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code="npm run dev" lang="sh" />
+     </TabItem>
+   </Tabs>
+
+4. **Open browser**
+
+   Open `http://localhost:60000` in your browser.
+
+   You can also open the devtools by going to `http://localhost:60000/_livestore`.
+
+</Steps>
+
+### Option B: Existing project setup \{#existing-project-setup\}
+
+<Steps>
+
+1. **Install dependencies**
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code={'bun install ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code={'pnpm add ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code={'npm install ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+   </Tabs>
+
+2. **Update Vite config**
+
+   Add the following code to your `vite.config.js` file:
+
+   <Code code={viteConfigCode} lang="js" title="vite.config.js" />
+</Steps>
+
+## Define Your Schema
+
+Create a file named `schema.ts` inside the `src/livestore` folder. This file defines your LiveStore schema consisting of your app's event definitions (describing how data changes), derived state (i.e. SQLite tables), and materializers (how state is derived from events).
+
+Here's an example schema:
+
+<Code code={CODE.schema} lang="ts" title="src/livestore/schema.ts" />
+
+## Create the LiveStore Worker
+
+Create a file named `livestore.worker.ts` inside the `src/livestore` folder. This file will contain the LiveStore web worker. When importing this file, make sure to add the `?worker` extension to the import path to ensure that Vite treats it as a worker file.
+
+<Code code={CODE.worker} lang="ts" title="src/livestore/livestore.worker.ts" />
+
+## Add the LiveStore Provider
+
+To make the LiveStore available throughout your app, wrap your app's root component with the `LiveStoreProvider` component from `@livestore/react`. This provider manages your app's data store, loading, and error states.
+
+Here's an example:
+
+<Code code={CODE.root} lang="tsx" title="src/Root.tsx" />
+
+### Commit events
+
+After wrapping your app with the `LiveStoreProvider`, you can use the `useStore` hook from any component to commit events.
+
+Here's an example:
+
+<Code code={CODE.header} lang="tsx" title="src/components/Header.tsx" />
+
+## Queries
+
+To retrieve data from the database, first define a query using `queryDb` from `@livestore/livestore`. Then, execute the query with the `useQuery` hook from `@livestore/react`.
+
+Consider abstracting queries into a separate file to keep your code organized, though you can also define them directly within components if preferred.
+
+Here's an example:
+
+<Code code={CODE.mainSection} lang="tsx" title="src/components/MainSection.tsx" />
+
+# [Solid](https://docs.livestore.dev/getting-started/solid/)
+
+## Overview
+
+TODO
+
+# [Getting started with LiveStore + Vue](https://docs.livestore.dev/getting-started/vue/)
+
+## Overview
+
+import { Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
+import { makeTiged, versionNpmSuffix } from '../../../../data.js'
+import { MIN_NODE_VERSION, LIVESTORE_WA_SQLITE_VERSION } from '../../../../../CONSTANTS.ts'
+import viteConfigCode from '../../../../../examples/standalone/web-todomvc-sync-cf/vite.config.js?raw'
+import schemaCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/livestore/schema.ts?raw'
+import workerCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/livestore.worker.ts?raw'
+import rootCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/Root.tsx?raw'
+import headerCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/components/Header.tsx?raw'
+import mainSectionCode from '../../../../../examples/standalone/web-todomvc-sync-cf/src/components/MainSection.tsx?raw'
+
+export const CODE = {
+  viteConfig: viteConfigCode,
+  schema: schemaCode,
+  worker: workerCode,
+  root: rootCode,
+  header: headerCode,
+  mainSection: mainSectionCode,
+}
+
+{/* We're adjusting the package to use the dev version on the dev branch */}
+export const manualInstallDepsStr = [
+  '@livestore/livestore' + versionNpmSuffix,
+  '@livestore/wa-sqlite@' + LIVESTORE_WA_SQLITE_VERSION,
+  '@livestore/adapter-web' + versionNpmSuffix,
+  '@livestore/utils' + versionNpmSuffix,
+  '@livestore/peer-deps' + versionNpmSuffix,
+  '@livestore/devtools-vite' + versionNpmSuffix,
+  'slashv/vue-livestore' + versionNpmSuffix,
+].join(' ')
+
+## Prerequisites
+
+- Recommended: Bun 1.2 or higher
+- Node.js {MIN_NODE_VERSION} or higher
+
+## About Vue integration
+
+Vue integration is still in beta and being incubated as a separate repository. Please direct any issues or contributions to [Vue LiveStore](https://github.com/slashv/vue-livestore)
+
+## Option A: Quick start
+
+For a quick start, we recommend referencing the [playground](https://github.com/slashv/vue-livestore/tree/main/playground) folder in the Vue LiveStore repository.
+
+## Option B: Existing project setup \{#existing-project-setup\}
+
+<Steps>
+
+1. **Install dependencies**
+
+   It's strongly recommended to use `bun` or `pnpm` for the simplest and most reliable dependency setup (see [note on package management](/misc/package-management) for more details).
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       <Code code={'bun install ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+     <TabItem label="pnpm">
+       <Code code={'pnpm add ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+     <TabItem label="npm">
+       <Code code={'npm install ' + manualInstallDepsStr} lang="sh" />
+     </TabItem>
+   </Tabs>
+
+2. **Update Vite config**
+
+   Add the following code to your `vite.config.js` file:
+
+    ```ts
+    import { livestoreDevtoolsPlugin } from '@livestore/devtools-vite'
+
+    import { defineConfig } from 'vite'
+    import vue from '@vitejs/plugin-vue'
+    import vueDevTools from 'vite-plugin-vue-devtools'
+
+    export default defineConfig({
+      plugins: [
+        vue(),
+        vueDevTools(),
+        livestoreDevtoolsPlugin({ schemaPath: './src/livestore/schema.ts' }),
+      ],
+      worker: { format: 'es' },
+    })
+    ```
+
+</Steps>
+
+### Define Your Schema
+
+Create a file named `schema.ts` inside the `src/livestore` folder. This file defines your LiveStore schema consisting of your app's event definitions (describing how data changes), derived state (i.e. SQLite tables), and materializers (how state is derived from events).
+
+Here's an example schema:
+
+<Code code={CODE.schema} lang="ts" title="src/livestore/schema.ts" />
+
+### Create the LiveStore Worker
+
+Create a file named `livestore.worker.ts` inside the `src/livestore` folder. This file will contain the LiveStore web worker. When importing this file, make sure to add the `?worker` extension to the import path to ensure that Vite treats it as a worker file.
+
+<Code code={CODE.worker} lang="ts" title="src/livestore/livestore.worker.ts" />
+
+### Add the LiveStore Provider
+
+To make the LiveStore available throughout your app, wrap your app's root component with the `LiveStoreProvider` component from `vue-livestore`. This provider manages your app's data store, loading, and error states.
+
+Here's an example:
+
+```vue
+<script setup lang="ts">
+import { makePersistedAdapter } from '@livestore/adapter-web'
+import LiveStoreSharedWorker from '@livestore/adapter-web/shared-worker?sharedworker'
+import LiveStoreWorker from './livestore/livestore.worker?worker'
+import { schema } from './livestore/schema'
+import { LiveStoreProvider } from 'vue-livestore'
+import ToDos from './components/to-dos.vue'
+
+const adapter = makePersistedAdapter({
+  storage: { type: 'opfs' },
+  worker: LiveStoreWorker,
+  sharedWorker: LiveStoreSharedWorker,
+})
+
+const storeOptions = {
+  schema,
+  adapter,
+  storeId: 'test_store',
+}
+</script>
+
+<template>
+  <LiveStoreProvider :options="storeOptions">
+    <template #loading>
+      <div>Loading LiveStore...</div>
+    </template>
+    <ToDos />
+  </LiveStoreProvider>
+</template>
+```
+
+### Commit events
+
+After wrapping your app with the `LiveStoreProvider`, you can use the `useStore` hook from any component to commit events.
+
+Here's an example:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { events } from '../livestore/schema'
+const { store } = useStore()
+
+const newTodoText = ref('')
+
+// Events
+const createTodo = () => {
+  store.commit(events.todoCreated({ id: crypto.randomUUID(), text: newTodoText.value }))
+  newTodoText.value = ''
+}
+</script>
+
+<template>
+  <div>
+    <input v-model="newTodoText" />
+    <button @click="createTodo">Create</button>
+  </div>
+</template>
+```
+
+### Queries
+
+To retrieve data from the database, first define a query using `queryDb` from `@livestore/livestore`. Then, execute the query with the `useQuery` hook from `@livestore/react`.
+
+Consider abstracting queries into a separate file to keep your code organized, though you can also define them directly within components if preferred.
+
+Here's an example:
+
+```vue
+<script setup lang="ts">
+import { queryDb } from '@livestore/livestore'
+import { useQuery } from 'vue-livestore'
+import { events, tables } from '../livestore/schema'
+
+const visibleTodos$ = queryDb(
+  () => tables.todos.where({ deletedAt: null }),
+  { label: 'visibleTodos' },
+)
+
+const todos = useQuery(visibleTodos$)
+</script>
+
+<template>
+  <div>
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">
+        {{ todo.text }}
+      </li>
+    </ul>
+  </div>
+</template>
+```
+
+# [Code of Conduct](https://docs.livestore.dev/misc/CODE_OF_CONDUCT/)
+
+## Overview
+
+## Our Pledge
+
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, caste, color, religion, or sexual
+identity and orientation.
+
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
+
+## Our Standards
+
+Examples of behavior that contributes to a positive environment for our
+community include:
+
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the overall
+  community
+
+Examples of unacceptable behavior include:
+
+* The use of sexualized language or imagery, and sexual attention or advances of
+  any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email address,
+  without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
+
+## Enforcement Responsibilities
+
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
+
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
+
+## Scope
+
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official email address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
+
+## Enforcement
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+[contact@livestore.dev][Contact].
+All complaints will be reviewed and investigated promptly and fairly.
+
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
+
+## Enforcement Guidelines
+
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
+
+### 1. Correction
+
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
+
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
+
+### 2. Warning
+
+**Community Impact**: A violation through a single incident or series of
+actions.
+
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or permanent
+ban.
+
+### 3. Temporary Ban
+
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
+
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
+
+### 4. Permanent Ban
+
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior, harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
+
+**Consequence**: A permanent ban from any sort of public interaction within the
+community.
+
+## Attribution
+
+This Code of Conduct is adapted from the [Contributor Covenant][Homepage],
+version 2.1, available at
+[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
+
+Community Impact Guidelines were inspired by
+[Mozilla's code of conduct enforcement ladder][Mozilla CoC].
+
+For answers to common questions about this code of conduct, see the FAQ at
+[https://www.contributor-covenant.org/faq][FAQ]. Translations are available at
+[https://www.contributor-covenant.org/translations][Translations].
+
+[Homepage]: https://www.contributor-covenant.org
+[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
+[Mozilla CoC]: https://github.com/mozilla/diversity
+[FAQ]: https://www.contributor-covenant.org/faq
+[Translations]: https://www.contributor-covenant.org/translations
+[Contact]: mailto:contact@livestore.dev
+
+# [Community](https://docs.livestore.dev/misc/community/)
+
+## Overview
+
+import { DISCORD_INVITE_URL } from '../../../../../CONSTANTS.js'
+import { officeHours } from '../../../../data.js'
+
+## Discord
+
+You can join the Discord server <a href={DISCORD_INVITE_URL}>here</a>.
+
+## Office hours
+
+You can join future office hour events [here](https://lu.ma/livestore).
+
+{
+  officeHours.map((url) => (
+    <iframe
+      width="560"
+      height="315"
+      src={url}
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      style={{ aspectRatio: '16 / 9' }}
+    />
+  ))
+}
+
+{/* TODO add conference talks */}
+{/* ## Conference talks */}
+
+## RFX: Request for exploration \{#rfx\}
+
+LiveStore opens the door to many new possibilities. Many more than I could explore or build myself, so I invite you to explore some of the ideas below.
+
+### Technological ideas
+
+- Auth
+  - Authn
+  - Authz
+  - e2ee
+- Server side
+  - React server rendering
+  - Centralized read models
+- Integrating with existing databases / systems
+- CRDTs for text editing
+  - Automerge / YJS as embedded data
+- Collaboration
+  - Presence features
+  - Blob files
+- Version control
+  - Manual push/pull + git-like commits of multiple events
+- Event-sourcing
+  - Schema evolution: migrating events (e.g. cambria)
+- Cross-app data interop
+- AI
+  - Local RAG
+  - Agents
+
+### Application ideas
+
+It would be great to see a new generation of apps built with LiveStore - ideally each app being:
+
+- [Local-first](https://www.inkandswitch.com/essay/local-first/)
+- Open-source
+- Self-hostable
+
+Here are some app ideas:
+
+- Replacement for Doodle
+- Replacement for Canny (feature requests)
+- Replacement for Splitwise
+- Replacement for Wunderlist
+- GitHub client
+- A secret Santa app
+- Movie / TV tracking app
+- Fitness app
+
+### LiveStore internals
+
+- Explore and improve multi-store ergonomics
+- Diff queries in SQLite
+- IVM
+
+# [Credits](https://docs.livestore.dev/misc/credits/)
+
+## Overview
+
+LiveStore wouldn't have been possible without the help and support of many individuals and companies.
+
+A special thanks goes to:
+
+- Geoffrey Litt & Nicholas Schiefer for the collaboration of the [Riffle research project](https://riffle.systems/essays/prelude/) on which LiveStore is based on
+- Matt Wonlaw for the collaboration on LiveStore over an extended period of time
+- [Kuldar](https://kuldar.com) for the lovely LiveStore logo
+- Ink & Switch for their visionary [local-first research](https://inkandswitch.com/local-first/) and for being a continuous source of inspiration
+- The SQLite team for their amazing work on the SQLite core library
+- Roy Hashimoto for their great work on the SQLite WASM library [wa-sqlite](https://github.com/rhashimoto/wa-sqlite) which LiveStore uses a fork of
+- Tim Suchanek for the initial collaboration on the Effect DB schema library
+- All sponsors, users & community members for feedback and support
+
+# [Frequently Asked Questions](https://docs.livestore.dev/misc/FAQ/)
+
+## Overview
+
+### Does LiveStore have optimistic updates?
+
+Yes and no. LiveStore doesn't have the concept of optimistic updates as you might know from libraries like [React Query](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates), however, any data update in LiveStore is automatically optimistic without the developer having to implement any special logic.
+
+This provides the benefits of optimistic updates without the extra complexity by manually having to implement the logic for each individual data update (which can be very error prone).
+
+### Does LiveStore have database transactions?
+
+LiveStore runs on the client-side and handles transactions differently than traditional server-side databases. While materializers automatically run in transactions, global transactional behavior (often called "online transactions") needs to be explicitly modeled in your application logic.
+
+### Can I use an ORM or query builder with LiveStore?
+
+It's possible to use most ORMs/query builders with LiveStore (as long as they are able to synchronously generate SQL statements). You should also give the built-in LiveStore query builder a try. See [the ORM page](/patterns/orm) for more information.
+
+### Is there a company behind LiveStore? How does LiveStore make money?
+
+LiveStore is developed by [Johannes Schickling](https://github.com/schickling) and has been incubated as the foundation of [Overtone](https://overtone.pro) (a local-first music app). The plan is to keep the development of LiveStore as sustainable as possible via sponsorships and other paths (e.g. commercial licenses, paid consulting, premium devtools, etc).
+
+### Is there a hosted sync backend provided by LiveStore?
+
+No, LiveStore is designed to be self-hosted or be used with a 3rd party sync backend.
+
+### Can I use my existing database with LiveStore? {#existing-database}
+
+Not currently. LiveStore is built around the idea of event-sourcing which separates reads and writes. This means LiveStore isn't syncing your database directly but only the events that are used to materialize the database making sure it's kept in sync across clients.
+
+However, we might provide support for this in the future depending on demand.
+
+# [Design Partners](https://docs.livestore.dev/misc/design-partners/)
+
+## Overview
+
+LiveStore is looking for design partners with the following aims:
+- For your company:
+  - Architectural guidance and internal training
+  - Priority support
+  - Influence over the roadmap and prioritization of features/bugfixes
+  - Make sure LiveStore is well-maintained as a critical part of your product
+- For LiveStore:
+  - Sustain the continous development and maintenance of the project
+  - Make sure LiveStore is a designed around real-world use cases and constraints
+
+Please [get in touch](https://forms.gle/NUy9irooEpXjqFAb6) if you're interested in becoming a design partner.
+
+# [Note on Package Management](https://docs.livestore.dev/misc/package-management/)
+
+## Overview
+
+export const catalog = `\
+catalog:
+  effect: ${EFFECT_VERSION} # As LiveStore depends on \`effect\`
+	# also \`react\`, \`react-dom\` etc based on your project
+`
+
+import { EFFECT_VERSION } from '../../../../../CONSTANTS.js'
+import { Code } from '@astrojs/starlight/components';
+
+## Recommended
+
+It's strongly recommended to use `pnpm` or `bun` when building an app with LiveStore to avoid dependency issues (e.g. wrong version resolution, duplicate dependencies, etc).
+
+### Peer dependencies
+
+Since LiveStore has a few peer dependencies, you either should manually add them to your project or add the `@livestore/peer-deps` package to your project to satisfy them.
+
+### PNPM Catalog
+
+When using `pnpm`, we recommend specifying the following packages in your [PNPM Catalog](https://pnpm.io/catalogs):
+
+<Code code={catalog} lang="yaml" title="pnpm-workspace.yaml" />
+
+# [Resources](https://docs.livestore.dev/misc/resources/)
+
+## Overview
+
+Feel free to use the following assets for presentations, blog posts, etc about LiveStore.
+
+## Logo
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center;">Dark PNG</th>
+      <th style="text-align: center;">Dark SVG</th>
+      <th style="text-align: center;">Light PNG</th>
+      <th style="text-align: center;">Light SVG</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="background-color: #333333; padding: 30px; text-align: center;">
+        <img src="/resources/logo-dark.png" width="200" alt="LiveStore Logo Dark PNG" />
+      </td>
+      <td style="background-color: #333333; padding: 30px; text-align: center;">
+        <img src="/resources/logo-dark.svg" width="200" alt="LiveStore Logo Dark SVG" />
+      </td>
+      <td style="background-color: #F0F0F0; padding: 30px; text-align: center;">
+        <img src="/resources/logo-light.png" width="200" alt="LiveStore Logo Light PNG" />
+      </td>
+      <td style="background-color: #F0F0F0; padding: 30px; text-align: center;">
+        <img src="/resources/logo-light.svg" width="200" alt="LiveStore Logo Light SVG" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Architecture Diagrams
+
+### Client scenarios
+
+<iframe src='https://www.tldraw.com/p/NJKH2PHghAeJC-7UIC1xF?d=v-97.-1297.3177.3303.ZMsCZoB-D6VX-W2poI5Gm' style={{ height: '400px', width: '100%' }} />
+
+### Sync architecture
+
+<iframe src='https://www.tldraw.com/p/CWLjWxk0On_rAtjsJ4vt2?d=v-491.-533.2303.2394.RaypXEQgx30bxQnCcVFAG' style={{ height: '400px', width: '100%' }} />
+
+### Data modeling
+
+<iframe src='https://www.tldraw.com/p/7yByV0g6ksHmbIORnwoH3?d=v-336.-500.1614.1677.RnlHGrijaybsLhyM0sTlL' style={{ height: '400px', width: '100%' }} />
+
+# [Sponsoring LiveStore](https://docs.livestore.dev/misc/sponsoring/)
+
+## Overview
+
+import { Sponsor } from '../../../components/Sponsor'
+
+## TLDR
+
+- Sponsoring LiveStore helps ensure long-term stability and improvements for the project you rely on.
+- Sponsors receive exclusive benefits, including a LiveStore Devtools license and access to sponsor-only resources.
+- LiveStore is fully open source and community-supported—your sponsorship directly enables its ongoing development.
+
+<Sponsor />
+
+## Goal: Sustainable Open Source
+
+As the creator and maintainer of LiveStore, I'm often asked *"how do you make money with LiveStore?"*. That's a great question with a simple answer. I'm not building LiveStore to make a lot of money - my goal is to make LiveStore a sustainable open source project. I've been working on LiveStore since 2021 (mostly full-time) and hope you can help to keep the project sustainable.
+
+Open source has been a big part of my life - I've founded [Prisma](https://www.prisma.io/), created [Contentlayer](https://www.contentlayer.dev/), and built/maintained many other open source projects over the years. Through these experiences, I've seen firsthand how challenging it can be to keep open source projects healthy in the long run. Too often, maintainers burn out, and projects that many people depend on end up dying. My goal with LiveStore is to build an open source project that's sustainable and could possibly serve as an inspiration for other open source projects.
+
+I wanted LiveStore to exist for over a decade - something I felt was missing in the ecosystem and that I know others have wanted as well. But building and maintaining a project on that level of ambition is incredibly hard, especially without a clear path to monetization. I believe that's also why a technology like LiveStore didn't exist yet. 
+
+Particularly being concerned about the sustainability of open source projects, I was hesitant to start another open source project myself. Still, I believe deeply in the value LiveStore creates for developers, and I'm committed to making it the best it can be.
+
+The unfortunate reality is that there is no well-established way for open source creators to get paid for their work. While there are some great initiatives and platforms out there - like [Open Source Pledge](https://opensourcepledge.org/), [Generous](https://generous.builders/), [GitHub Sponsors](https://github.com/sponsors), [Polar](https://polar.sh/), [OpenCollective](https://opencollective.com/), and [thanks.dev](https://thanks.dev/) - most open source projects still struggle to capture even a fraction of the value they create. I believe in a positive-sum world, and I'm happy to contribute, but sustainability is essential if LiveStore is going to keep growing and improving.
+
+My mid-/long term goal is to bring in enough resources not just to support myself, but to pay others to work on LiveStore as well. I want to ensure that the project remains stable, well-maintained, and innovative - something you can truly rely on. Sponsorship is the most direct way to make this possible. It's not just about funding features or bug fixes; it's about creating a relationship where your support helps guarantee the future of a tool you depend on.
+
+I hope those words resonate with you and you'll understand why sponsoring LiveStore isn't just a nice gesture - it's essential for keeping the project going and a direct investment in the stability and evolution of a project that your application (and business) depends on. Your support ensures that LiveStore remains sustainable and healthy for the whole community.
+
+Thank you! 🧡
+
+## Related posts
+
+- [The Open Source Sustainability Crisis](https://openpath.quest/2024/the-open-source-sustainability-crisis/) by Chad Whitacre
+- [Entitlement in Open Source](https://mikemcquaid.com/entitlement-in-open-source/) by Homebrew lead Mike McQuaid
+
+## Aligned Incentives
+
+-	**Stability and Reliability:**
+  Your application depends on LiveStore as the core data foundation. Sponsorship ensures continuous, focused maintenance and improvement, directly benefiting you with increased stability, reliability, and performance.
+
+-	**Shared Investment in Long-term Success:**
+  Sponsorship creates mutual investment in the project's future. You sponsoring LiveStore signals that it is crucial to your business, motivating me (and other maintainers) to prioritize features, enhancements, and fixes that benefit you.
+
+-	**Avoiding Costly In-House Development:**
+  LiveStore offers a unique architectural design with (currently) no direct alternatives readily available. So the only alternative is building something similar in-house which is takes a lot of time and resources. Sponsorship aligns incentives by ensuring LiveStore remains an attractive and efficient alternative.
+
+-	**Transparent Sustainability:**
+  Open-source sustainability is a common challenge as projects stagnate without sustainable resources. Sponsorship transparently addresses this, providing maintainers with clarity and stability, ensuring the project thrives and evolves to users' benefit.
+
+-	**Healthy Community and Ecosystem**:
+  Sponsors actively contribute to fostering a healthy, collaborative ecosystem. Their direct involvement ensures responsiveness to real-world needs, creating an ongoing, beneficial dialogue between users and maintainers.
+
+-	**Focused Innovation and Quality**:
+  Regular sponsorship allows maintainers to allocate dedicated time to innovative research and high-quality development. This ultimately translates into more reliable software, fewer bugs, faster releases, and thoughtful features driven by actual user needs.
+
+-	**Ensuring Longevity and Avoiding Lock-In**:
+  By aligning financial incentives through sponsorship, maintainers avoid being forced into less favorable monetization methods (e.g., restrictive licensing or heavy commercial lock-ins), maintaining open access and flexibility for users.
+
+## Sponsor Benefits
+
+You can access your sponsor benefits via the [Sponsor dashboard](https://livestore.dev/sponsor).
+
+- [LiveStore Devtools](/reference/devtools) License
+- Access to
+  - Sponsor-only Discord channels
+  - LiveStore Office Hours
+- Prioritized bug fixes and feature requests
+
+## Thanks to our Sponsors
+
+A big and heartfelt thank you to all our sponsors. Your support has been invaluable and LiveStore wouldn't be where it is without you.
+
+### Partners
+
+- [ElectricSQL](https://www.electricsql.com/)
+- [Netlify](https://www.netlify.com/)
+- [Expo](https://expo.dev/)
+- [Axial](https://axial.work/)
+
+### Individuals
+
+A big thank you to all individual GitHub sponsors! 🧡
+
+## FAQ
+
+### Why not raise VC money for LiveStore?
+
+While raising venture capital for LiveStore might be possible, the challenge lies in building a VC-scale business around LiveStore. My current goal is to make and keep LiveStore sustainable without investor funding. (While I don't rule out this path in the future, it's currently not planned.)
+
+### Why not build a hosting service around LiveStore?
+
+While technically feasible, LiveStore embraces partnerships with other syncing services to create a win-win situation and minimize vendor lock-in for users.
+
+### Are free devtools licenses for students?
+
+Yes, please reach out via Discord.
+
+### Are there other ways to support LiveStore?
+
+Yes, there are many ways to support LiveStore:
+
+- Become a [contributor / maintainer](/contributing/contributing)
+- Help other community members (e.g. via Discord)
+- Spread the word
+  - Give talks, write blog posts, post on social media, ...
+- Provide feedback (e.g. via GitHub issues or Discord)
+
+# [Anonymous user transition](https://docs.livestore.dev/patterns/anonymous-user-transition/)
+
+## Overview
+
+## Basic idea
+
+- Locally choose a unique identifier for the user (e.g. via `crypto.randomUUID()`).
+	- You might want to handle the very unlikely case that the identifier is not unique (collision) on the sync backend.
+- Persist this identifier locally (either via a separate LiveStore instance or via `localStorage`).
+- Use this identifier in the `storeId` for the user-related LiveStore instance.
+	- Initially when the user is anonymous, the store won't be synced yet (i.e. no sync backend used in adapter).
+	- As part of the auth flow, the LiveStore instance is now synced with the same `storeId` to a sync backend which will sync all local events to the sync backend making sure the user keeps all their data.
+
+# [App Evolution](https://docs.livestore.dev/patterns/app-evolution/)
+
+## Overview
+
+When building an app with LiveStore, you'll need to keep some things in mind when evolving your app.
+
+## Schema changes
+
+### State schema changes
+
+Generally any kind of changes to your state schema (e.g. SQLite tables, ...) can be done at any time without any further considerations assuming the event materializer is updated to support the new schema.
+
+### Event schema changes
+
+Event schema changes require a bit more consideration. Changes to the event schema should generally be done in a backwards-compatible way. See [Event schema evolution](/reference/events/#schema-evolution) for more details.
+
+## Parallel different app versions
+
+In scenarios where you have multiple app versions rolled out in parallel (e.g. app version v3 with event schema v3 and app version v4 with event schema v4), you'll need to keep the following in mind:
+
+App instances running version 4 might commit events that are not yet supported by version 3. Your app needs to decide how to handle this scenario in one of the following ways:
+
+- Ignore unknown events
+- Cause an error in the app for unknown events
+- Handle events with a "catch all" event handler
+- Let app render a "app update required" screen. App can still be used in read-only mode.
+- ...
+
+# [Encryption](https://docs.livestore.dev/patterns/encryption/)
+
+## Overview
+
+LiveStore doesn't yet support encryption but might in the future.
+See [this issue](https://github.com/livestorejs/livestore/issues/70) for more details.
+
+For now you can implement encryption yourself e.g. by encrypting the events using a custom Effect Schema definition which applies a encryption transformation to the events.
+
+# [External Data](https://docs.livestore.dev/patterns/external-data/)
+
+## Overview
+
+LiveStore doesn't provide any built-in functionality to deal with external data. However, LiveStore was designed with this use case in mind (e.g. Overtone integrates with lots of external data like Spotify, ...). One way to deal with external data is to also model it as an event log and materialize it into LiveStore state as well.
+
+(If you're interested in learning more about the solution we're using for Overtone, get in touch.)
+
+# [Offline Support](https://docs.livestore.dev/patterns/offline/)
+
+## Overview
+
+- LiveStore supports offline data management out of the box. In order to make your app work fully offline, you might need to also consider the following:
+  - Design your app in a way to treat the network as an optional feature (e.g. when relying on other APIs / external data)
+  - Use service workers to cache assets locally (e.g. images, videos, etc.)
+
+# [Presence](https://docs.livestore.dev/patterns/presence/)
+
+## Overview
+
+LiveStore doesn't yet have any built-in presence functionality (e.g. to track online/offline users).
+
+Common presence use cases are:
+- Track which users are online / in a room
+- Track which users are typing (e.g. in a chat)
+- Text cursor (similar to Google Docs)
+- Cursor movements (similar to Figma)
+
+For now it's recommend to implement presence functionality in your application or use a third party service (e.g. Liveblocks).
+
+# [Side effect](https://docs.livestore.dev/patterns/side-effects/)
+
+## Overview
+
+TODO: Document how to safely run side-effects as response to LiveStore events.
+
+Notes for writing those docs:
+- Scenarios:
+  - Run side-effect in each client session
+  - Run side-effect only once per client (i.e. use a lock between client sessions)
+  - Run side-effect only once globally (will require some kind of global transaction)
+- How to deal with rollbacks/rebases
+- Allow for filtering events based on whether they have been confirmed by the sync backend or include unconfirmed events
+
+# [AI](https://docs.livestore.dev/patterns/ai/)
+
+## Overview
+
+- LiveStore is a great fit for building AI applications.
+- Scenarios:
+  - Local RAG (via sqlite-vec (see [feature request](https://github.com/livestorejs/livestore/issues/127)) + local LLM e.g. Gemini Nano embedded in Chrome)
+  - Agentic applications
+
+## Example
+
+```ts
+// TODO (contribution welcome)
+```
+
+# [File Management](https://docs.livestore.dev/patterns/file-management/)
+
+## Overview
+
+LiveStore doesn't have built-in support for file management but it's easy to use LiveStore alongside existing file storage solutions (e.g. S3).
+
+The basic idea is to store the file metadata (e.g. url, name, size, type) in LiveStore and the file content separately.
+
+## Example
+
+```ts
+// TODO (contribution welcome)
+```
+
+# [Troubleshooting](https://docs.livestore.dev/misc/troubleshooting/)
+
+## Overview
+
+### Store / sync backend is stuck in a weird state
+
+While hopefully rare in practice, it might still happen that a client or a sync backend is stuck in a weird/invalid state. Please report such cases as a [GitHub issue](https://github.com/livestorejs/livestore/issues).
+
+To avoid being stuck, you can either:
+
+- use a different `storeId`
+- or reset the sync backend and local client for the given `storeId` 
+
+## React related issues
+
+### Query doesn't update properly
+
+If you notice the result of a `useQuery` hook is not updating properly, you might be missing some dependencies in the query's hash.
+
+For example, the following query:
+
+```ts
+// Don't do this
+const query$ = useQuery(queryDb(tables.issues.query.where({ id: issueId }).first()))
+//                                                              ^^^^^^^ missing in deps
+
+// Do this instead
+const query$ = useQuery(queryDb(tables.issues.query.where({ id: issueId }).first(), { deps: [issueId] }))
+```
+
+## `node_modules` related issues
+
+### `Cannot execute an Effect versioned ...`
+
+If you're seeing an error like `RuntimeException: Cannot execute an Effect versioned 3.10.13 with a Runtime of version 3.10.12`, you likely have multiple versions of `effect` installed in your project.
+
+As a first step you can try deleting `node_modules` and running `pnpm install` again.
+
+If the issue persists, you can try to add `"resolutions": { "effect": "3.15.2" }` or [`pnpm.overrides`](https://pnpm.io/package_json#pnpmoverrides) to your `package.json` to force the correct version of `effect` to be used.
+
+## Package management
+
+- Please make sure you only have a single version of any given package in your project (incl. LiveStore and other packages like `react`, etc). Having multiple versions of the same package can lead to all kinds of issues and should be avoided. This is particularly important when using LiveStore in a monorepo.
+- Setting `resolutions` in your root `package.json` or tools like [PNPM catalogs](https://pnpm.io/catalogs) or [Syncpack](https://github.com/JamieMason/syncpack) can help you manage this.
+
+# [Effect](https://docs.livestore.dev/patterns/effect/)
+
+## Overview
+
+LiveStore itself is built on top of [Effect](https://effect.website) which is a powerful library to write production-grade TypeScript code. It's also possible (and recommended) to use Effect directly in your application code.
+
+## Schema
+
+LiveStore uses the [Effect Schema](https://effect.website/docs/schema/introduction/) library to define schemas for the following:
+
+- Read model table column definitions
+- Event event payloads definitions
+- Query response types
+
+For convenience, LiveStore re-exports the `Schema` module from the `effect` package, which is the same as if you'd import it via `import { Schema } from 'effect'` directly.
+
+### Example
+
+```ts
+import { Schema } from '@livestore/livestore'
+
+// which is equivalent to (if you have `effect` as a dependency)
+import { Schema } from 'effect'
+```
+
+# [ORM](https://docs.livestore.dev/patterns/orm/)
+
+## Overview
+
+- LiveStore has a built-in query builder which should be sufficient for most simple use cases.
+- You can always fall back to using raw SQL queries if you need more complex queries.
+- As long as the ORM allows supports synchronously generating SQL statements (and binding parameters), you should be able to use it with LiveStore.
+- Supported ORMs:
+  - [Knex](https://knexjs.org/)
+	- [Kysely](https://kysely.dev/)
+  - [Drizzle](https://orm.drizzle.team/)
+  - [Objection.js](https://vincit.github.io/objection.js/)
+- Unsupported ORMs:
+  - [Prisma](https://www.prisma.io/) (because it's async)
+
+## Example
+
+```ts
+// TODO (contribution welcome)
+```
+
+# [Rich Text Editing](https://docs.livestore.dev/patterns/rich-text-editing/)
+
+## Overview
+
+LiveStore doesn't yet have any built-in support for rich text editing. It's currently recommended to use a purpose-built library (e.g. [Yjs](https://yjs.dev/) or [Automerge](https://automerge.org/)) for this use case in combination with LiveStore.
+
+The idea here is to reference the rich text document from within LiveStore's event log and sync both in parallel.
+
+## Example
+
+```ts
+// TODO
+```
+
+# [State Machines](https://docs.livestore.dev/patterns/state-machines/)
+
+## Overview
+
+LiveStore can be used to implement state machines or together with existing state machine libraries (e.g. [XState](https://stately.ai/docs/xstate)).
+
+The basic idea is to listen query results and emit events when the query results change. The state machine side effects can then further commit new mutations to LiveStore.
+
+## Example
+
+```ts
+// TODO (contribution welcome)
+```
+
+# [Undo/Redo](https://docs.livestore.dev/patterns/undo-redo/)
+
+## Overview
+
+Undo/redo functionality should be generally modeled through explicit events instead of "removing" events from the event history.
+
+## Example
+
+```ts
+// TODO (contribution welcome)
+```
+
+# [File Structure](https://docs.livestore.dev/patterns/file-structure/)
+
+## Overview
+
+While there are no strict requirements/conventions for how to structure your project (files, folders, etc), a common pattern is to have a `src/livestore` folder which contains all the LiveStore related code.
+
+```
+src/
+	livestore/
+		index.ts # re-exports everything
+		schema.ts # schema definitions
+		queries.ts # query definitions
+		events.ts # event definitions
+		...
+	...
+```
+
+# [Auth](https://docs.livestore.dev/patterns/auth/)
+
+## Overview
+
+LiveStore doesn't include built-in authentication or authorization support, but you can implement it in your app's logic.
+
+## Pass an auth payload to the sync backend
+
+Use the `syncPayload` store option to send a custom payload to your sync backend.
+
+### Example
+
+The following example sends the authenticated user's JWT to the server.
+
+```tsx
+<LiveStoreProvider
+  schema={schema}
+  storeId={storeId}
+  syncPayload={{
+    authToken: user.jwt, // Using a JWT
+  }}
+>
+  ...
+```
+
+On the sync server, validate the token and allow or reject the sync based on the result. See the following example:
+
+```ts
+import { makeDurableObject, makeWorker } from '@livestore/sync-cf/cf-worker'
+import * as jose from 'jose'
+
+const JWT_SECRET = 'a-string-secret-at-least-256-bits-long'
+
+export class WebSocketServer extends makeDurableObject({
+  onPush: async (message) => {
+    console.log('onPush', message.batch)
+  },
+  onPull: async (message) => {
+    console.log('onPull', message)
+  },
+}) {}
+
+export default makeWorker({
+  validatePayload: async (payload: any) => {
+    const { authToken } = payload
+
+    if (!authToken) {
+      throw new Error('No auth token provided')
+    }
+
+    const user = await getUserFromToken(authToken)
+
+    if (!user) {
+      throw new Error('Invalid auth token')
+    } else {
+      // User is authenticated!
+      console.log('Sync backend payload', JSON.stringify(user, null, 2))
+    }
+
+    // Check if token is expired
+    if (payload.exp && payload.exp < Date.now() / 1000) {
+      throw new Error('Token expired')
+    }
+  },
+  enableCORS: true,
+})
+
+async function getUserFromToken(token: string): Promise<jose.JWTPayload | undefined> {
+  try {
+    const { payload } = await jose.jwtVerify(token, new TextEncoder().encode(JWT_SECRET))
+    return payload
+  } catch (error) {
+    console.log('⚠️ Error verifying token', error)
+  }
+}
+```
+
+The above example uses [`jose`](https://www.npmjs.com/package/jose), a popular JavaScript module that supports JWTs. It works across various runtimes, including Node.js, Cloudflare Workers, Deno, Bun, and others.
+
+The `validatePayload` function receives the `authToken`, checks if the payload exists, and verifies that it's valid and hasn't expired. If all checks pass, sync continues as normal. If any check fails, the server rejects the sync.
+
+The client app still works as expected, but saves data locally. If the user re-authenticates or refreshes the token later, LiveStore syncs any local changes made while the user was unauthenticated.
+
+# [Version control](https://docs.livestore.dev/patterns/version-control/)
+
+## Overview
+
+LiveStore's event sourcing approach allows you to implement version control functionality in your application (similar to Git but for your application domain). This could include features like:
+
+- Branching
+- Semantic commit messages & grouping
+- History tracking
+- Semantic/interactive merges
+
+# [Concepts](https://docs.livestore.dev/reference/concepts/)
+
+## Overview
+
+![](https://share.cleanshot.com/sv62BGww+)
+
+## Overview
+
+- Adapter (platform adapter)
+  - An adapter can instantiate a client session for a given platform (e.g. web, Expo)
+- Client
+  - A logical group of client sessions
+  - Client session
+    - Store
+    - Reactivity graph
+    - Responsible for leader election
+- [Devtools](/reference/devtools)
+- [Events](/reference/events)
+  - Event definition
+  - Eventlog
+  - Synced vs client-only events
+- Framework integration
+  - A framework integration is a package that provides a way to integrate LiveStore with a framework (e.g. React, Solid, Svelte, etc.)
+- [Reactivity system](/reference/reactivity-system)
+  - Db queries `queryDb()`
+  - Computed queries `computed()`
+  - Signals `signal()`
+- Schema
+  - LiveStore uses schema definitions for the following cases:
+    - [Event definitions](/reference/events)
+    - [SQLite state schema](/reference/state/sqlite-schema)
+    - [Query result schemas](/reference/state/sql-queries)
+  - LiveStore uses the [Effect Schema module](/patterns/effect) to define fine-granular schemas
+- State
+  - Derived from the eventlog via materializers
+  - Materializer
+    - Event handler function that maps an event to a state change
+  - SQLite state / database
+    - In-memory SQLite database within the client session thread (usually main thread)
+      - Used by the reactivity graph
+    - Persisted SQLite database (usually running on the leader thread)
+    - Fully derived from the eventlog
+- [Store](/reference/store)
+  - A store exposes most of LiveStore's functionality to the application layer and is the main entry point for using LiveStore.
+  - To create a store you need to provide a schema and a platform adapter which creates a client session.
+  - A store is often created, managed and accessed through a framework integration (like React).
+  - A is identified by a `storeId` which is also used for syncing events between clients.
+- Sync provider
+  - A sync provider is a package that provides a sync backend and a sync client.
+  - Sync backend
+    - A central server that is responsible for syncing the eventlog between clients
+
+### Implementation details
+
+- Leader thread
+  - Responsible for syncing and persisting of data
+- Sync processor
+  - LeaderSyncProcessor
+  - ClientSessionSyncProcessor
+
+## Pluggable architecture
+
+LiveStore is designed to be pluggable in various ways:
+
+- Platform adapters
+- Sync providers
+- Framework integrations
+
+# [Debugging a LiveStore app](https://docs.livestore.dev/reference/debugging/)
+
+## Overview
+
+When working on a LiveStore app you might end up in situations where you need to debug things. LiveStore is built with debuggability in mind and tries to make your life as a developer as easy as possible.
+
+Here are a few things that LiveStore offers to help you debug your app:
+
+- [OpenTelemetry](/reference/opentelemetry) integration for tracing / metrics
+- [Devtools](/reference/devtools) for inspecting the state of the store
+- Store helper methods
+
+## Debugging helpers on the store
+
+The `store` exposes a `_dev` property which contains a few helpers that can help you debug your app.
+
+## Other recommended practices and tools
+
+- Use the step debugger
+
+# [Devtools](https://docs.livestore.dev/reference/devtools/)
+
+## Overview
+
+NOTE: Once LiveStore is open source, the devtools will be a [sponsor-only benefit](/misc/sponsoring).
+
+## Features
+
+- Real-time data browser with 2-way sync
+  ![](https://share.cleanshot.com/F79hpTCY+)
+- Query inspector
+  ![](https://share.cleanshot.com/pkr2jqgb+)
+- Eventlog browser
+  ![](https://share.cleanshot.com/PTgXpcPm+)
+- Sync status
+  ![](https://share.cleanshot.com/VsKY3KnR+)
+- Export/import
+  ![](https://share.cleanshot.com/LQKYX6rq+)
+- Reactivity graph / signals inspector
+  ![](https://share.cleanshot.com/M26FHD6j+)
+- SQLite playground
+  ![](https://share.cleanshot.com/BcWmLmn2+)
+
+## Adapters
+
+### `@livestore/adapter-web`:
+
+Requires the `@livestore/devtools-vite` package to be installed and configured in your Vite config:
+
+```ts
+// vite.config.js
+import { livestoreDevtoolsPlugin } from '@livestore/devtools-vite'
+
+export default defineConfig({
+  // ...
+  plugins: [
+    livestoreDevtoolsPlugin({ schemaPath: './src/livestore/schema.ts' }),
+  ],
+})
+```
+
+The devtools can be opened in a separate tab (via e.g. `localhost:3000/_livestore/web). You should see the Devtools URL logged in the browser console when running the app.
+
+#### Chrome extension
+
+You can also use the Devtools Chrome extension.
+
+![](https://share.cleanshot.com/wlM4ybFn+)
+
+Please make sure to manually install the extension version matching the LiveStore version you are using by downloading the appropriate version from the [GitHub releases page](https://github.com/livestorejs/livestore/releases) and installing it manually via `chrome://extensions/`.
+
+To install the extension:
+
+1. **Unpack the ZIP file** (e.g. `livestore-devtools-chrome-0.3.0.zip`) into a folder on your computer.
+2. Navigate to `chrome://extensions/` and enable **Developer mode** (toggle in the top-right corner).
+3. Click **"Load unpacked"** and select the unpacked folder or drag and drop the folder onto the page.
+
+### `@livestore/adapter-expo`:
+
+Requires the `@livestore/devtools-expo` package to be installed and configured in your metro config:
+
+```ts
+// metro.config.js
+const { getDefaultConfig } = require('expo/metro-config')
+const { addLiveStoreDevtoolsMiddleware } = require('@livestore/devtools-expo')
+
+const config = getDefaultConfig(__dirname)
+
+addLiveStoreDevtoolsMiddleware(config, { schemaPath: './src/livestore/schema.ts' })
+
+module.exports = config
+```
+
+You can open the devtools by pressing `Shift+m` in the Expo CLI process and then selecting `@livestore/devtools-expo` which will open the devtools in a new tab.
+  
+### `@livestore/adapter-node`:
+
+Devtools are configured out of the box for the `makePersistedAdapter` variant (note currently not supported for the `makeInMemoryAdapter` variant).
+
+You should see the Devtools URL logged when running the app.
+
+# [OpenTelemetry](https://docs.livestore.dev/reference/opentelemetry/)
+
+## Overview
+
+LiveStore has built-in support for OpenTelemetry.
+
+## Usage with React
+
+```tsx
+// otel.ts
+const makeTracer = () => {
+  const url = import.meta.env.VITE_OTEL_EXPORTER_OTLP_ENDPOINT
+  const provider = new WebTracerProvider({
+    spanProcessors: [new SimpleSpanProcessor(new OTLPTraceExporter({ url }))],
+  })
+
+  provider.register()
+
+  return provider.getTracer('livestore')
+}
+
+export const tracer = makeTracer()
+
+// In your main entry file
+import { tracer } from './otel.js'
+
+export const App: React.FC = () => (
+  <LiveStoreProvider
+    // ...
+    otelOptions={{ tracer }}
+  >
+    <AppBody />
+  </LiveStoreProvider>
+)
+
+// And in your `livestore.worker.ts`
+import { tracer } from './otel.js'
+
+makeWorker({ schema, otelOptions: { tracer } })
+```
+
+# [Events](https://docs.livestore.dev/reference/events/)
+
+## Overview
+
+## Event definitions
+
+There are two types of events:
+
+- `synced`: Events that are synced across clients
+- `clientOnly`: Events that are only processed locally on the client (but still synced across client sessions e.g. across browser tabs/windows)
+
+An event definition consists of a unique name of the event and a schema for the event arguments. It's recommended to version event definitions to make it easier to evolve them over time.
+
+Events will be synced across clients and materialized into state (i.e. SQLite tables) via [materializers](/reference/state/materializers).
+
+### Example
+
+```ts
+// livestore/schema.ts
+import { Events, Schema, sql } from '@livestore/livestore'
+
+export const events = {
+  todoCreated: Events.synced({
+    name: 'v1.TodoCreated',
+    schema: Schema.Struct({ id: Schema.String, text: Schema.String }),
+  }),
+  todoCompleted: Events.synced({
+    name: 'v1.TodoCompleted',
+    schema: Schema.Struct({ id: Schema.String }),
+  }),
+}
+```
+
+### Best Practices
+
+- It's strongly recommended to use past-tense event names (e.g. `todoCreated`/`createdTodo` instead of `todoCreate`/`createTodo`) to indicate something already occurred.
+- TODO: write down more best practices
+- TODO: mention AI linting (either manually or via a CI step)
+  - core idea: feed list of best practices to AI and check if events adhere to them + get suggestions if not
+- It's recommended to avoid `DELETE` events and instead use soft-deletes (e.g. add a `deleted` date/boolean column with a default value of `null`). This helps avoid some common concurrency issues.
+
+### Schema evolution \{#schema-evolution\}
+
+- Event definitions can't be removed after they were added to your app.
+- Event schema definitions can be evolved as long as the changes are forward-compatible.
+  - That means data encoded with the old schema can be decoded with the new schema.
+  - In practice, this means ...
+    - for structs ...
+      - you can add new fields if they have default values or are optional
+      - you can remove fields
+
+## Commiting events
+
+```ts
+// somewhere in your app
+import { events } from './livestore/schema.js'
+
+store.commit(
+	events.todoCreated({ id: '1', text: 'Buy milk' })
+)
+```
+
+## Eventlog
+
+The history of all events that have been committed is stored forms the "eventlog". It is persisted in the client as well as in the sync backend.
+
+Example `eventlog.db`:
+
+![](https://share.cleanshot.com/R6ny879w+)
+
+# [Reactivity System](https://docs.livestore.dev/reference/reactivity-system/)
+
+## Overview
+
+LiveStore has a high-performance, fine-grained reactivity system built in which is similar to Signals (e.g. in [SolidJS](https://docs.solidjs.com/concepts/signals)).
+
+## Defining reactive state
+
+LiveStore provides 3 types of reactive state:
+- Reactive SQL queries on top of SQLite state (`queryDb()`)
+- Reactive state values (`signal()`)
+- Reactive computed values (`computed()`)
+
+Reactive state variables end on a `$` by convention (e.g. `todos$`). The `label` option is optional but can be used to identify the reactive state variable in the devtools.
+
+### Reactive SQL queries
+
+```ts
+import { queryDb } from '@livestore/livestore'
+
+const todos$ = queryDb(tables.todos.orderBy('createdAt', 'desc'), { label: 'todos$' })
+
+// Or using callback syntax to depend on other queries
+const todos$ = queryDb((get) => {
+  const { showCompleted } = get(uiState$)
+  return tables.todos.where(showCompleted ? { completed: true } : {})
+}, { label: 'todos$' })
+```
+
+### Signals
+
+Signals are reactive state values that can be set and get. This can be useful for state that is not materialized from events into SQLite tables.
+
+```ts
+import { signal } from '@livestore/livestore'
+
+const now$ = signal(Date.now(), { label: 'now$' })
+
+setInterval(() => {
+  store.setSignal(now$, Date.now())
+}, 1000)
+
+// Counter example
+const num$ = signal(0, { label: 'num$' })
+const increment = () => store.setSignal(num$, (prev) => prev + 1)
+
+increment()
+increment()
+
+console.log(store.query(num$)) // 2
+```
+
+### Computed values
+
+```ts
+import { computed } from '@livestore/livestore'
+
+const num$ = signal(0, { label: 'num$' })
+const duplicated$ = computed((get) => get(num$) * 2, { label: 'duplicated$' })
+```
+
+## Accessing reactive state
+
+Reactive state is always bound to a `Store` instance. You can access the current value of reactive state the following ways:
+
+### Using the `Store` instance
+
+```ts
+// One-off query
+const count = store.query(count$)
+
+// By subscribing to the reactive state value
+const unsub = count$.subscribe((count) => {
+  console.log(count)
+})
+```
+
+### Via framework integrations
+
+#### React
+
+```ts
+import { useQuery } from '@livestore/react'
+
+const MyComponent = () => {
+  const value = useQuery(state$)
+
+  return <div>{value}</div>
+}
+```
+
+#### Solid
+
+```ts
+import { query } from '@livestore/solid'
+
+const MyComponent = () => {
+  const value = query(state$)
+
+  return <div>{value}</div>
+}
+```
+
+### Reacting to changing variables passed to queries
+
+If your query depends on a variable passed in by the component, use the deps array to react to changes in this variable.
+
+```ts
+const todos$ = ({ showCompleted } ) => queryDb((get) => {
+  return tables.todos.where(showCompleted ? { completed: true } : {})
+}, {
+  label: 'todos$',
+  deps: [showCompleted] // 👈 add to deps array
+})
+
+const MyComponent = ({ showCompleted }) => {
+  const todos = store.useQuery(todos$({ showCompleted }))
+
+  return <div>{todos.length} Done</div>
+}
+
+``` 
+
+## Further reading
+
+- [Riffle](https://riffle.systems/essays/prelude/): Building data-centric apps with a reactive relational database
+- [Adapton](http://adapton.org/) / [miniAdapton](https://arxiv.org/pdf/1609.05337)
+
+## Related technologies
+
+- [Signia](https://signia.tldraw.dev/): Signia is a minimal, fast, and scalable signals library for TypeScript developed by TLDraw.
+
+# [Store](https://docs.livestore.dev/reference/store/)
+
+## Overview
+
+The `Store` is the most common way to interact with LiveStore from your application code. It provides a way to query data, commit events, and subscribe to data changes.
+
+## Creating a store
+
+For how to create a store in React, see the [React integration docs](/reference/framework-integrations/react-integration). The following example shows how to create a store manually:
+
+```ts
+import { createStorePromise } from '@livestore/livestore'
+import { schema } from './livestore/schema.js'
+
+const adapter = // ...
+
+const store = await createStorePromise({
+  schema,
+  adapter,
+  storeId: 'some-store-id',
+})
+```
+
+## Using a store
+
+### Querying data
+
+```ts
+const todos = store.query(tables.todos)
+```
+
+### Subscribing to data
+
+```ts
+const unsubscribe = store.subscribe(tables.todos, (todos) => {
+  console.log(todos)
+})
+```
+
+### Committing events
+
+```ts
+store.commit(events.todoCreated({ id: '1', text: 'Buy milk' }))
+```
+
+### Shutting down a store
+
+```ts
+await store.shutdown()
+```
+
+## Multiple Stores
+
+You can create and use multiple stores in the same app. This can be useful when breaking up your data model into smaller pieces.
+
+## Development/debugging helpers
+
+A store instance also exposes a `_dev` property that contains some helpful methods for development. For convenience you can access a store on `globalThis`/`window` like via `__debugLiveStore.default._dev` (`default` is the store id):
+
+```ts
+// Download the SQLite database
+__debugLiveStore.default._dev.downloadDb()
+
+// Download the eventlog database
+__debugLiveStore.default._dev.downloadEventlogDb()
+
+// Reset the store
+__debugLiveStore.default._dev.hardReset()
+
+// See the current sync state
+__debugLiveStore.default._dev.syncStates()
+```
+
+# [Custom Elements](https://docs.livestore.dev/reference/framework-integrations/custom-elements/)
+
+## Overview
+
+import { Code } from '@astrojs/starlight/components';
+import customElementsCode from '../../../../../../examples/standalone/web-todomvc-custom-elements/src/main.ts?raw'
+
+LiveStore can be used with custom elements/web components.
+
+## Example
+
+See [examples](/examples) for a complete example.
+
+<Code lang="ts" title="src/main.ts" code={customElementsCode} />
+
+# [React integration for LiveStore](https://docs.livestore.dev/reference/framework-integrations/react-integration/)
+
+## Overview
+
+While LiveStore is framework agnostic, the `@livestore/react` package provides a first-class integration with React.
+
+## Features
+
+- High performance
+- Fine-grained reactivity (using LiveStore's signals-based reactivity system)
+- Instant, synchronous query results (without the need for `useEffect` and `isLoading` checks)
+- Transactional state transitions (via `batchUpdates`)
+- Also supports Expo / React Native via `@livestore/adapter-expo`
+
+## API
+
+### `LiveStoreProvider`
+
+In order to use LiveStore with React, you need to wrap your application in a `LiveStoreProvider`.
+
+```tsx
+import { LiveStoreProvider } from '@livestore/react'
+import { unstable_batchedUpdates as batchUpdates } from 'react-dom'
+
+const Root = () => {
+  return (
+    <LiveStoreProvider schema={schema} adapter={adapter} batchUpdates={batchUpdates}>
+      <App />
+    </LiveStoreProvider>
+  )
+}
+```
+
+For scenarios where you have an existing store instance, you can manually create a `LiveStoreContext.Provider`:
+
+```tsx
+import { LiveStoreContext } from '@livestore/react'
+import { createStorePromise } from '@livestore/livestore'
+
+const store = createStorePromise({ /* ... */ })
+
+const Root = () => {
+  return (
+    <LiveStoreContext.Provider value={{ stage: 'running', store }}>
+      <App />
+    </LiveStoreContext.Provider>
+  )
+}
+```
+
+### useStore
+
+```tsx
+import { useStore } from '@livestore/react'
+
+const MyComponent = () => {
+  const { store } = useStore()
+
+  React.useEffect(() => {
+    store.commit(tables.todos.insert({ id: '1', text: 'Hello, world!' }))
+  }, [])
+
+  return <div>...</div>
+}
+```
+
+### useQuery
+
+```tsx
+import { useStore } from '@livestore/react'
+
+const query$ = tables.todos.query.where({ completed: true }).orderBy('createdAt', 'desc')
+
+const CompletedTodos = () => {
+  const { store } = useStore()
+  const todos = store.useQuery(query$)
+
+  return <div>{todos.map((todo) => <div key={todo.id}>{todo.text}</div>)}</div>
+}
+```
+
+### useClientDocument
+
+```tsx
+import { useStore } from '@livestore/react'
+
+const TodoItem = ({ id }: { id: string }) => {
+  const { store } = useStore()
+  const [todo, updateTodo] = store.useClientDocument(tables.todos, id)
+
+  return <div onClick={() => updateTodo({ text: 'Hello, world!' })}>{todo.text}</div>
+}
+```
+
+## Usage with ...
+
+### Vite
+
+LiveStore works with Vite out of the box.
+
+### Tanstack Start
+
+LiveStore works with Tanstack Start out of the box.
+
+### Expo / React Native
+
+LiveStore has a first-class integration with Expo / React Native via `@livestore/adapter-expo`.
+
+### Next.js
+
+Given various Next.js limitations, LiveStore doesn't yet work with Next.js out of the box.
+
+## Technical notes
+
+- `@livestore/react` uses `React.useState` under the hood for `useQuery` / `useClientDocument` to bind LiveStore's reactivity to React's reactivity. Some libraries are using `React.useExternalSyncStore` for similar purposes but using `React.useState` in this case is more efficient and all that's needed for LiveStore.
+- `@livestore/react` supports React Strict Mode.
+
+# [Solid integration](https://docs.livestore.dev/reference/framework-integrations/solid-integration/)
+
+## Overview
+
+import { Code } from '@astrojs/starlight/components';
+import solidStoreCode from '../../../../../../examples/standalone/web-todomvc-solid/src/livestore/store.tsx?raw'
+import solidMainSectionCode from '../../../../../../examples/standalone/web-todomvc-solid/src/components/MainSection.tsx?raw'
+
+## Example
+
+See [examples](/examples) for a complete example.
+
+<Code lang="ts" title="src/livestore/store.tsx" code={solidStoreCode} />
+
+<Code lang="ts" title="src/components/MainSection.tsx" code={solidMainSectionCode} />
+
+# [Electron Adapter](https://docs.livestore.dev/reference/platform-adapters/electron-adapter/)
+
+## Overview
+
+LiveStore doesn't yet support Electron (see [this issue](https://github.com/livestorejs/livestore/issues/296) for more details).
+
+# [Tauri Adapter](https://docs.livestore.dev/reference/platform-adapters/tauri-adapter/)
+
+## Overview
+
+LiveStore doesn't yet support Tauri (see [this issue](https://github.com/livestorejs/livestore/issues/125) for more details).
+
+# [SQLite State Schema](https://docs.livestore.dev/reference/state/sqlite-schema/)
+
+## Overview
+
+import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import schemaCode from '../../../../../../examples/standalone/web-todomvc/src/livestore/schema.ts?raw'
+
+LiveStore provides a schema definition language for defining your database tables and mutation definitions. LiveStore automatically migrates your database schema when you change your schema definitions.
+
+### Example
+
+
+<Tabs syncKey="package-manager">
+  <TabItem label="schema.ts">
+    <Code lang="ts" code={schemaCode} />
+  </TabItem>
+</Tabs>
+
+
+### Schema migrations
+
+Migration strategies:
+
+- `auto`: Automatically migrate the database to the newest schema and rematerializes the state from the eventlog.
+- `manual`: Manually migrate the database to the newest schema.
+
+### Client documents
+
+- Meant for convenience
+- Client-only
+- Goal: Similar ease of use as `React.useState`
+- When schema changes in a non-backwards compatible way, previous events are dropped and the state is reset
+  - Don't use client documents for sensitive data which must not be lost
+- Implies
+  - Table with `id` and `value` columns
+  - `${MyTable}Set` event + materializer (which are auto-registered)
+
+### Column types
+
+#### Core SQLite column types
+
+- `State.SQLite.text`: A text field, returns `string`.
+- `State.SQLite.integer`: An integer field, returns `number`.
+- `State.SQLite.real`: A real field (floating point number), returns `number`.
+- `State.SQLite.blob`: A blob field (binary data), returns `Uint8Array`.
+
+#### Higher level column types
+
+- `State.SQLite.boolean`: An integer field that stores `0` for `false` and `1` for `true` and returns a `boolean`.
+- `State.SQLite.json`: A text field that stores a stringified JSON object and returns a decoded JSON value.
+- `State.SQLite.datetime`: A text field that stores dates as ISO 8601 strings and returns a `Date`.
+- `State.SQLite.datetimeInteger`: A integer field that stores dates as the number of milliseconds since the epoch and returns a `Date`.
+
+
+#### Custom column schemas
+
+You can also provide a custom schema for a column which is used to automatically encode and decode the column value.
+
+#### Example: JSON-encoded struct
+
+```ts
+import { State, Schema } from '@livestore/livestore'
+
+export const UserMetadata = Schema.Struct({ 
+  petName: Schema.String,
+  favoriteColor: Schema.Literal('red', 'blue', 'green'),
+ })
+
+export const userTable = State.SQLite.table({
+  name: 'user',
+  columns: {
+    id: State.SQLite.text({ primaryKey: true }),
+    name: State.SQLite.text(),
+    metadata: State.SQLite.json({ schema: UserMetadata }),
+  }
+})
+```
+
+## Best Practices
+
+- It's usually recommend to **not distinguish** between app state vs app data but rather keep all state in LiveStore.
+	- This means you'll rarely use `React.useState` when using LiveStore
+- In some cases for "fast changing values" it can make sense to keep a version of a state value outside of LiveStore with a reactive setter for React and a debounced setter for LiveStore to avoid excessive LiveStore mutations. Cases where this can make sense can include:
+  - Text input / rich text editing
+  - Scroll position tracking, resize events, move/drag events
+  - ...
+
+# [SQLite in LiveStore](https://docs.livestore.dev/reference/state/sqlite/)
+
+## Overview
+
+LiveStore heavily uses SQLite as its default state/read model.
+
+## Implementation notes
+
+- LiveStore relies on the following SQLite extensions to be available: `-DSQLITE_ENABLE_BYTECODE_VTAB -DSQLITE_ENABLE_SESSION -DSQLITE_ENABLE_PREUPDATE_HOOK`
+  - [bytecode](https://www.sqlite.org/bytecodevtab.html)
+  - [session](https://www.sqlite.org/sessionintro.html) (incl. preupdate)
+
+- For web / node adapater:
+  - LiveStore uses [a fork](https://github.com/livestorejs/wa-sqlite) of the [wa-sqlite](https://github.com/rhashimoto/wa-sqlite) SQLite WASM library.
+  - In the future LiveStore might use a non-WASM build for Node/Bun/Deno/etc.
+- For Expo adapter:
+  - LiveStore uses the official expo-sqlite library which supports LiveStore's SQLite requirements.
+
+- LiveStore uses the `session` extension to enable efficient database rollback which is needed when the eventlog is rolled back as part of a rebase. An alternative implementation strategy would be to rely on snapshotting (i.e. periodically create database snapshots and roll back to the latest snapshot + applied missing mutations).
+
+# [Syncing](https://docs.livestore.dev/reference/syncing//)
+
+## Overview
+
+## How it works
+
+LiveStore is based on [the idea of event-sourcing](/evaluation/event-sourcing) which means it syncs events across clients (via a central sync backend) and then materializes the events in the local SQLite database. This means LiveStore isn't syncing the SQLite database itself directly but only the events that are used to materialize the database making sure it's kept in sync across clients.
+
+The syncing mechanism is similar to how Git works in that regard that it's based on a "push/pull" model. Upstream events always need to be pulled before a client can push its own events to preserve a [global total order of events](https://medium.com/baseds/ordering-distributed-events-29c1dd9d1eff). Local pending events which haven't been pushed yet need to be rebased on top of the latest upstream events before they can be pushed.
+
+<iframe src='https://www.tldraw.com/p/CWLjWxk0On_rAtjsJ4vt2?d=v-480.-234.2966.2441.RaypXEQgx30bxQnCcVFAG' style={{ height: '400px', width: '100%' }} />
+
+## Events
+
+A LiveStore event consists of the following data:
+- `seqNum`: event sequence number
+- `parentSeqNum`: parent event sequence number
+- `name`: event name (refers to a event definition in the schema)
+- `args`: event arguments (encoded using the event's schema definition, usually JSON)
+
+### Event sequence numbers
+
+- Event sequence numbers: monotonically increasing integers
+  - client event sequence number to sync across client sessions (never exposed to the sync backend)
+
+### Sync heads
+
+- The latest event in a eventlog is referred to as the "head" (similar to how Git refers to the latest commit as the "head").
+- Given that LiveStore does hierarchical syncing between the client session, the client leader and the sync backend, there are three heads (i.e. the client session head, the client leader head, and the sync backend head).
+
+## Sync backend
+
+The sync backend acts as the global authority and determines the total order of events ("causality"). It's responsible for storing and querying events and for notifying clients when new events are available.
+
+### Requirements for sync backend
+
+- Needs to provide an efficient way to query an ordered list of events given a starting event ID (often referred to as cursor).
+- Ideally provides a "reactivity" mechanism to notify clients when new events are available (e.g. via WebSocket, HTTP long-polling, etc).
+  - Alternatively, the client can periodically query for new events which is less efficient.
+
+## Clients
+
+- Each client initialy chooses a random `clientId` as its globally unique ID
+  - LiveStore uses a 6-char nanoid
+	- In the unlikely event of a collision which is detected by the sync backend the first time a client tries to push, the client chooses a new random `clientId`, patches the local events with the new `clientId`, and tries again.
+
+### Local syncing across client sessions
+
+- For adapters which support multiple client sessions (e.g. web), LiveStore also supports local syncing across client sessions (e.g. across browser tabs or worker threads).
+- LiveStore does this by electing a leader thread which is responsible for syncing and persiting data locally.
+- Client session events are not synced to the sync backend.
+
+## Auth (Authentication & Authorization)
+
+- TODO
+  - Provide basic example
+  - Encryption
+
+## Advanced
+
+### Sequence diagrams
+
+#### Pulling events (without unpushed events)
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Sync Backend
+    Client->>Sync Backend: `pull` request (head_cursor)
+    Sync Backend->>Sync Backend: Get new events (since head_cursor)
+    Sync Backend-->>Client: New events
+    activate Client
+    Note over Client: Client is in sync
+    deactivate Client
+```
+
+#### Pushing events
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Sync Backend
+
+    Client->>Client: Commits events
+    Client->>Sync Backend: `push` request (new_local_events)
+    activate Sync Backend
+    Sync Backend->>Sync Backend: Process push request (validate, persist)
+    Sync Backend-->>Client: Push Success
+    deactivate Sync Backend
+    Note over Client: Client is in sync
+```
+
+### Rebasing
+
+### Merge conflicts
+
+- Merge conflict handling isn't implemented yet (see [this issue](https://github.com/livestorejs/livestore/issues/253)).
+- Merge conflict detection and resolution will be based on the upcoming [facts system functionality](https://github.com/livestorejs/livestore/issues/254).
+
+### Compaction
+
+- Compaction isn't implemented yet (see [this issue](https://github.com/livestorejs/livestore/issues/136))
+- Compaction will be based on the upcoming [facts system functionality](https://github.com/livestorejs/livestore/issues/254).
+
+### Partitioning
+
+- Currently LiveStore assumes a 1:1 mapping between an eventlog and a SQLite database.
+- In the future, LiveStore aims to support multiple eventlogs (see [this issue](https://github.com/livestorejs/livestore/issues/255)).
+
+
+## Design decisions / trade-offs
+
+- Require a central sync backend to enforce a global total order of events.
+  - This means LiveStore can't be used in a fully decentralized/P2P manner.
+- Do rebasing on the client side (instead of on the sync backend). This allows the user to have more control over the rebase process.
+
+## Notes
+
+- Rich text data is best handled via CRDTs (see [#263](https://github.com/livestorejs/livestore/issues/263))
+
+## Further reading
+
+- Distributed Systems lecture series by Martin Kleppmann: [YouTube playlist](https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB) / [lecture notes](https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf)
+
+# [Server-side clients](https://docs.livestore.dev/reference/syncing/server-side-clients/)
+
+## Overview
+
+import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+You can also use LiveStore on the server side e.g. via the `@livestore/adapter-node` adapter. This allows you to:
+- have an up-to-date server-side SQLite database (read model)
+- react to events / state changes on the server side (e.g. to send emails/push notifications)
+- commit events on the server side (e.g. for sensitive/trusted operations)
+
+![](https://share.cleanshot.com/9gG45pWJ+)
+
+Note about the schema: While the `events` schema needs to be shared across all clients, the `state` schema can be different for each client (e.g. to allow for a different SQLite table design on the server side).
+
+## Example
+
+<Tabs>
+  <TabItem label="main.ts">
+    <Code lang="ts" code={`\
+  import { makeAdapter } from '@livestore/adapter-node'
+  import { createStorePromise } from '@livestore/livestore'
+  import { makeCfSync } from '@livestore/sync-cf'
+
+  import { events, schema, tables } from './livestore/schema.js'
+
+  const adapter = makeAdapter({
+    storage: { type: 'fs', baseDirectory: 'tmp' },
+    sync: { backend: makeCfSync({ url: 'ws://localhost:8787' }), onSyncError: 'shutdown' },
+  })
+
+  const store = await createStorePromise({
+    adapter,
+    schema,
+    storeId: 'test',
+    syncPayload: { authToken: 'insecure-token-change-me' },
+  })
+
+  const todos = store.query(tables.todos.where({ completed: false }))
+    `} />
+  </TabItem>
+  <TabItem label="schema.ts">
+    <Code lang="ts" code={`\
+  import { makeSchema } from '@livestore/livestore'
+
+  const events = // ...
+  const state = // ...
+
+  export const schema = makeSchema({ events, state })
+    `} />
+  </TabItem>
+</Tabs>
+
+## Further notes
+
+### Cloudflare Workers
+
+- The `@livestore/adapter-node` adapter doesn't yet work with Cloudflare Workers but you can follow [this issue](https://github.com/livestorejs/livestore/issues/266) for a Cloudflare adapter to enable this use case.
+- Having a `@livestore/adapter-cf-worker` adapter could enable serverless server-side client scenarios.
+
+# [Expo Adapter](https://docs.livestore.dev/reference/platform-adapters/expo-adapter/)
+
+## Overview
+
+## Notes on Android
+
+- By default, Android requires `https` (including WebSocket connections) when communicating with a sync backend.
+
+To allow for `http` / `ws`, you can run `expo install expo-build-properties` and add the following to your `app.json` (see [here](https://docs.expo.dev/versions/latest/sdk/build-properties/#pluginconfigtypeandroid) for more information):
+
+```json
+{
+  "expo": {
+    "plugins": [
+      "expo-build-properties",
+      {
+        "android": {
+          "usesCleartextTraffic": true
+        },
+        "ios": {}
+      }
+    ]
+  }
+}
+```
+
+# [Node Adapter](https://docs.livestore.dev/reference/platform-adapters/node-adapter/)
+
+## Overview
+
+Works with Node.js, Bun and Deno.
+
+## Example
+
+```ts
+import { makeAdapter } from '@livestore/adapter-node'
+
+const adapter = makeAdapter({
+	storage: { type: 'fs' },
+	// or in-memory:
+	// storage: { type: 'in-memory' },
+	sync: { backend: makeCfSync({ url: 'ws://localhost:8787' }) },
+	// To enable devtools:
+	// devtools: { schemaPath: new URL('./schema.ts', import.meta.url) },
+})
+```
+
+### Worker adapter
+
+The worker adapter can be used for more advanced scenarios where it's preferable to reduce the load of the main thread and run persistence/syncing in a worker thread.
+
+```ts
+// main.ts
+import { makeWorkerAdapter } from '@livestore/adapter-node'
+
+const adapter = makeWorkerAdapter({
+	workerUrl: new URL('./livestore.worker.js', import.meta.url),
+})
+
+// livestore.worker.ts
+import { makeWorker } from '@livestore/adapter-node/worker'
+
+const adapter = makeAdapter({
+	storage: { type: 'fs' },
+	// or in-memory:
+	// storage: { type: 'in-memory' },
+	sync: { backend: makeCfSync({ url: 'ws://localhost:8787' }) },
+})
+```
+
+# [SQL Queries](https://docs.livestore.dev/reference/state/sql-queries/)
+
+## Overview
+
+## Query builder
+
+LiveStore also provides a small query builder for the most common queries. The query builder automatically derives the appropriate result schema internally.
+
+```ts
+const table = State.SQLite.table({
+	name: 'my_table',
+	columns: {
+		id: State.SQLite.text({ primaryKey: true }),
+		name: State.SQLite.text(),
+	},
+})
+
+// Read queries
+table.select('name')
+table.where('name', '==', 'Alice')
+table.where({ name: 'Alice' })
+table.orderBy('name', 'desc').offset(10).limit(10)
+table.count().where('name', 'like', '%Ali%')
+
+// Write queries
+table.insert({ id: '123', name: 'Bob' })
+table.update({ name: 'Alice' }).where({ id: '123' })
+table.delete().where({ id: '123' })
+```
+
+## Raw SQL queries
+
+LiveStore supports arbitrary SQL queries on top of SQLite. In order for LiveStore to handle the query results correctly, you need to provide the result schema.
+
+```ts
+import { queryDb, State, Schema, sql } from '@livestore/livestore'
+
+const table = State.SQLite.table({
+	name: 'my_table',
+	columns: {
+		id: State.SQLite.text({ primaryKey: true }),
+		name: State.SQLite.text(),
+	},
+})
+
+const filtered$ = queryDb({
+	query: sql`select * from my_table where name = 'Alice'`,
+	schema: Schema.Array(table.schema),
+})
+
+const count$ = queryDb({
+	query: sql`select count(*) as count from my_table`,
+	schema: Schema.Struct({ count: Schema.Number }).pipe(Schema.pluck('count'), Schema.Array, Schema.headOrElse()),
+})
+```
+
+## Best Practices
+
+- Query results should be treated as immutable/read-only
+- For queries which could return many rows, it's recommended to paginate the results
+  - Usually both via paginated/virtualized rendering as well as paginated queries
+	- You'll get best query performance by using a `WHERE` clause over an indexed column combined with a `LIMIT` clause. Avoid `OFFSET` as it can be slow on large tables
+- For very large/complex queries, it can also make sense to implement incremental view maintenance (IVM) for your queries
+  - You can for example do this by have a separate table which is a materialized version of your query results which you update manually (and ideally incrementally) as the underlying data changes.
+
+# [Materializers](https://docs.livestore.dev/reference/state/materializers/)
+
+## Overview
+
+Materializers are functions that allow you to write to your database in response to events. Materializers are executed in the order of the events in the eventlog.
+
+## Example
+
+```ts
+
+const events = {
+  todoCreated: Events.synced({
+    name: 'todoCreated',
+    schema: Schema.Struct({ id: Schema.String, text: Schema.String, completed: Schema.Boolean.pipe(Schema.optional) }),
+  }),
+  userPreferencesUpdated: Events.synced({
+    name: 'userPreferencesUpdated',
+    schema: Schema.Struct({ userId: Schema.String, theme: Schema.String }),
+  }),
+  factoryResetApplied: Events.synced({
+    name: 'factoryResetApplied',
+    schema: Schema.Struct({ }),
+  }),
+}
+
+/**
+ * A materializer function receives two arguments:
+ * 1. `eventPayload`: The deserialized data of the event.
+ * 2. `context`: An object containing:
+ *    - `query`: A function to execute read queries against the current state of the database within the transaction.
+ *    - `db`: The raw database instance (e.g., a Drizzle instance for SQLite).
+ *    - `event`: The full event object, including metadata like event ID and timestamp.
+ */
+const materializers = State.SQLite.materializers(events, {
+  // Example of a single database write
+  todoCreated: ({ id, text, completed }, ctx) => todos.insert({ id, text, completed: completed ?? false }),
+
+  // Materializers can also have no return if no database writes are needed for an event
+  userPreferencesUpdated: ({ userId, theme }, ctx) => {
+    console.log(`User ${userId} updated theme to ${theme}. Event ID: ${ctx.event.id}`);
+    // No database write in this materializer
+  },
+
+  // It's also possible to return multiple database writes as an array
+  factoryResetApplied: (_payload, ctx) => [
+    table1.update({ someVal: 0 }),
+    table2.update({ otherVal: 'default' }),
+    // ...
+  ]
+}
+```
+
+## Reading from the database in materializers
+
+Sometimes it can be useful to query your current state when executing a materializer. This can be done by using `ctx.query` in your materializer function.
+
+```ts
+const materializers = State.SQLite.materializers(events, {
+  todoCreated: ({ id, text, completed }, ctx) => {
+    const previousIds = ctx.query(todos.select('id'))
+    return todos.insert({ id, text, completed: completed ?? false, previousIds })
+  },
+}
+```
+
+## Transactional behaviour
+
+A materializer is always executed in a transaction. This transaction applies to:
+- All database write operations returned by the materializer.
+- Any `ctx.query` calls made within the materializer, ensuring a consistent view of the data.
+
+Materializers can return:
+- A single database write operation.
+- An array of database write operations.
+- `void` (i.e., no return value) if no database modifications are needed.
+- An `Effect` that resolves to one of the above (e.g., `Effect.succeed(writeOp)` or `Effect.void`).
+
+The `context` object passed to each materializer provides `query` for database reads, `db` for direct database access if needed, and `event` for the full event details.
+
+## Error Handling
+
+If a materializer function throws an error, or if an `Effect` returned by a materializer fails, the entire transaction for that event will be rolled back. This means any database changes attempted by that materializer for the failing event will not be persisted. The error will be logged, and the system will typically halt or flag the event as problematic, depending on the specific LiveStore setup.
+
+If the error happens on the client which tries to commit the event, the event will never be committed and pushed to the sync backend.
+
+In the future there will be ways to configure the error-handling behaviour, e.g. to allow skipping an incoming event when a materializer fails in order to avoid the app getting stuck. However, skipping events might also lead to diverging state across clients and should be used with caution.
+
+## Best practices
+
+### Side-effect free / deterministic
+
+It's strongly recommended to make sure your materializers are side-effect free and deterministic. This also implies passing in all necessary data via the event payload.
+
+Example:
+
+```ts
+// Don't do this
+const events = {
+  todoCreated: Events.synced({
+    name: "v1.TodoCreated",
+    schema: Schema.Struct({ text: Schema.String }),
+  }),
+}
+
+const materializers = State.SQLite.materializers(events, {
+  "v1.TodoCreated": ({ text }) =>
+    tables.todos.insert({ id: crypto.randomUUID(), text }),
+  //                          ^^^^^^^^^^^^^^^^^^^
+  //                          This is non-deterministic
+})
+
+store.commit(events.todoCreated({ text: 'Buy groceries' }))
+
+// Instead do this
+const events = {
+  todoCreated: Events.synced({
+    name: "v1.TodoCreated",
+    schema: Schema.Struct({ id: Schema.String, text: Schema.String }),
+    //                      ^^^^^^^^^^^^^^^^^
+    //                      Also include the id in the event payload
+  }),
+}
+
+const materializers = State.SQLite.materializers(events, {
+  "v1.TodoCreated": ({ id, text }) => tables.todos.insert({ id, text }),
+})
+
+store.commit(events.todoCreated({ id: crypto.randomUUID(), text: 'Buy groceries' }))
+```
+
+# [Vue integration for LiveStore](https://docs.livestore.dev/reference/framework-integrations/vue-integration/)
+
+## Overview
+
+The [vue-livestore](https://github.com/slashv/vue-livestore) package provides integration with Vue. It's currently in beta but aims to match feature parity with the React integration.
+
+## API
+
+### `LiveStoreProvider`
+
+In order to use LiveStore with Vue, you need to wrap your application in a `LiveStoreProvider`.
+
+```vue
+<script setup lang="ts">
+import { LiveStoreProvider } from 'vue-livestore'
+</script>
+
+<template>
+  <LiveStoreProvider :options="{ schema, adapter, storeId }">
+    <template #loading>
+      <div>Loading LiveStore...</div>
+    </template>
+    <ToDos />
+  </LiveStoreProvider>
+</template>
+```
+
+### useStore
+
+```ts
+const { store } = useStore()
+
+const createTodo = () => {
+  store.commit(
+    events.todoCreated({ id: crypto.randomUUID(), text: 'Eat broccoli' })
+  )
+}
+```
+
+### useQuery
+
+```vue
+<script setup lang="ts">
+import { queryDb } from '@livestore/livestore'
+import { useQuery } from 'vue-livestore'
+import { events, tables } from '../livestore/schema'
+
+const visibleTodos$ = queryDb(
+  () => tables.todos.where({ deletedAt: null }),
+  { label: 'visibleTodos' },
+)
+
+const todos = useQuery(visibleTodos$)
+</script>
+
+<template>
+  <div>
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">
+        {{ todo.text }}
+      </li>
+    </ul>
+  </div>
+</template>
+```
+
+### useClientDocument
+
+**[!] The interface for useClientDocument is experimental and might change**
+
+Since it's more common in Vue to work with a single writable ref (as compared to state, setState in React) the useClientDocument composable for Vue tries to make that easier by directly returning a collection of refs.
+
+The current implementation destructures all client state variables into the return object which allows directly binding to v-model or editing the .value reactivly.
+
+```vue
+<script setup lang="ts">
+import { tables } from '../livestore/schema'
+
+const { newTodoText, filters } = useClientDocument(tables.uiState)
+</script>
+
+<template>
+<input type="text" v-model="newTodoText">
+
+<select v-model="filters">
+  <option value="all">All</option>
+  ...
+<select>
+</template>
+```
+
+## Usage with ...
+
+### Vite
+
+LiveStore and vue-livestore works with Vite out of the box.
+
+### Nuxt.js
+
+Works out of the box with Nuxt if SSR is disabled by just wrapping the main content in a LiveStoreProvider. Example repo upcoming.
+
+## Technical notes
+
+- Vue-livestore uses the provider component pattern similar to the React integration. In Vue the plugin pattern is more common but it isn't clear that that's the most suitable structure for LiveStore in Vue. We might switch to the plugin pattern if we later find that more suitable especially with regards to Nuxt support and supporting multiple stores.
+
+# [Web Adapter](https://docs.livestore.dev/reference/platform-adapters/web-adapter/)
+
+## Overview
+
+## Example
+
+```ts
+// main.ts
+import { makePersistedAdapter } from '@livestore/adapter-web'
+import LiveStoreSharedWorker from '@livestore/adapter-web/shared-worker?sharedworker'
+import LiveStoreWorker from './livestore.worker?worker'
+
+const adapter = makePersistedAdapter({
+  storage: { type: 'opfs' },
+  worker: LiveStoreWorker,
+  sharedWorker: LiveStoreSharedWorker,
+})
+```
+
+```ts
+// livestore.worker.ts
+import { makeWorker } from '@livestore/adapter-web/worker'
+
+import { schema } from './schema/index.js'
+
+makeWorker({ schema })
+```
+
+## Adding a sync backend
+
+```ts
+// livestore.worker.ts
+import { makeSomeSyncBackend } from '@livestore/sync-some-sync-backend'
+
+makeWorker({ schema, sync: { backend: makeSomeSyncBackend('...') } })
+```
+
+## In-memory adapter
+
+You can also use the in-memory adapter which can be useful in certain scenarios (e.g. testing).
+
+```ts
+import { makeInMemoryAdapter } from '@livestore/adapter-web'
+
+const adapter = makeInMemoryAdapter({
+  schema,
+  // sync: { backend: makeSomeSyncBackend('...') },
+})
+```
+
+## Web worker
+
+- Make sure your schema doesn't depend on any code which needs to run in the main thread (e.g. avoid importing from files using React)
+  - Unfortunately this constraints you from co-locating your table definitions in component files.
+  - You might be able to still work around this by using the following import in your worker:
+    ```ts
+    import '@livestore/adapter-web/worker-vite-dev-polyfill'
+    ```
+
+### Why is there a dedicated web worker and a shared worker?
+
+- Shared worker:
+  - Needed to allow tabs to communicate with each other using a binary message channel.
+  - The shared worker mostly acts as a proxy to the dedicated web worker.
+- Dedicated web worker (also called "leader worker" via leader election mechanism using web locks):
+  - Acts as the leader/single writer for the storage.
+  - Also handles connection to sync backend.
+  - Currently needed for synchronous OPFS API which isn't supported in a shared worker. (Hopefully won't be needed in the future anymore.)
+
+### Why not use a service worker?
+
+- While service workers seem similar to shared workers (i.e. only a single instance across all tabs), they serve different purposes and have different trade-offs.
+- Service workers are meant to be used to intercept network requests and tend to "shut down" when there are no requests for some period of time making them unsuitable for our use case.
+- Also note that service workers don't support some needed APIs such as OPFS.
+
+## Storage
+
+LiveStore currently only support OPFS to locally persist its data. In the future we might add support for other storage types (e.g. IndexedDB).
+
+LiveStore also uses `window.sessionStorage` to retain the identity of a client session (e.g. tab/window) across reloads.
+
+In case you want to reset the local persistence of a client, you can provide the `resetPersistence` option to the adapter.
+
+```ts
+// Example which resets the persistence when the URL contains a `reset` query param
+const resetPersistence = import.meta.env.DEV && new URLSearchParams(window.location.search).get('reset') !== null
+
+if (resetPersistence) {
+  const searchParams = new URLSearchParams(window.location.search)
+  searchParams.delete('reset')
+  window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
+}
+
+const adapter = makePersistedAdapter({
+  storage: { type: 'opfs' },
+  worker: LiveStoreWorker,
+  sharedWorker: LiveStoreSharedWorker,
+  resetPersistence
+})
+```
+
+If you want to reset persistence manually, you can:
+
+1. **Clear site data** in Chrome DevTools (Application tab > Storage > Clear site data)
+2. **Use console command** if the above doesn't work due to a Chrome OPFS bug:
+
+```javascript
+const opfsRoot = await navigator.storage.getDirectory();
+await opfsRoot.remove();
+```
+
+Note: Only use this during development while the app is running.
+
+## Architecture diagram
+
+Assuming the web adapter in a multi-client, multi-tab browser application, a diagram looks like this:
+
+![](https://i.imgur.com/NCKbfub.png)
+
+## Other notes
+
+- The web adapter is using some browser APIs that might require a HTTPS connection (e.g. `navigator.locks`). It's recommended to even use HTTPS during local development (e.g. via [Caddy](https://caddyserver.com/docs/automatic-https)).
+
+## Browser support
+
+- Notable required browser APIs: OPFS, SharedWorker, `navigator.locks`, WASM
+- The web adapter of LiveStore currently doesn't work on Android browsers as they don't support the `SharedWorker` API (see [Chromium bug](https://issues.chromium.org/issues/40290702)).
+
+## Best Practices
+
+- It's recommended to develop in an incognito window to avoid issues with persistent storage (e.g. OPFS).
+
+## FAQ
+
+### What's the bundle size of the web adapter?
+
+LiveStore with the web adapter adds two parts to your application bundle:
+
+- The LiveStore JavaScript bundle (~180KB gzipped)
+- SQLite WASM (~300KB gzipped)
+
+# [Cloudflare Workers](https://docs.livestore.dev/reference/syncing/sync-provider/cloudflare/)
+
+## Overview
+
+The `@livestore/sync-cf` package provides a LiveStore sync provider targeting Cloudflare Workers using Durable Objects (for websocket connections) and D1 (for persisting events).
+
+## Example
+
+### Using the web adapter
+
+In your `livestore.worker.ts` file, you can use the `makeCfSync` function to create a sync backend.
+
+```ts
+import { makeCfSync } from '@livestore/sync-cf'
+import { makeWorker } from '@livestore/adapter-web/worker'
+
+import { schema } from './livestore/schema.js'
+
+const url = 'ws://localhost:8787'
+// const url = 'https://websocket-server.your-user.workers.dev
+
+makeWorker({
+  schema,
+  sync: { backend: makeCfSync({ url }) },
+})
+```
+
+### Cloudflare Worker
+
+In your CF worker file, you can use the `makeDurableObject` and `makeWorker` functions to create a sync backend.
+
+```ts
+import { makeDurableObject, makeWorker } from '@livestore/sync-cf/cf-worker'
+
+export class WebSocketServer extends makeDurableObject({
+  onPush: async (message) => {
+    console.log('onPush', message.batch)
+  },
+  onPull: async (message) => {
+    console.log('onPull', message)
+  },
+}) {}
+
+export default makeWorker({
+  validatePayload: (payload: any) => {
+    if (payload?.authToken !== 'insecure-token-change-me') {
+      throw new Error('Invalid auth token')
+    }
+  },
+})
+
+```
+
+#### Custom Cloudflare Worker handling
+
+If you want to embed the sync backend request handler in your own Cloudflare worker, you can do so by using the `handleWebSocket` function for the `/websocket` endpoint.
+
+```ts
+import { handleWebSocket } from '@livestore/sync-cf/cf-worker'
+
+export default {
+  fetch: async (request: Request, env: Env, ctx: ExecutionContext) => {
+    const url = new URL(request.url)
+
+    if (url.pathname.endsWith('/websocket')) {
+      return handleWebSocket(request, env, ctx, {
+        validatePayload: (payload: any) => {
+          if (payload?.authToken !== 'insecure-token-change-me') {
+            throw new Error('Invalid auth token')
+          }
+        },
+      })
+    }
+
+    return new Response('Invalid path', { status: 400 })
+  },
+}
+```
+
+## Deployment
+
+The sync backend can be deployed to Cloudflare using the following command:
+
+```bash
+wrangler deploy
+```
+
+## How the sync backend works
+
+- A Cloudflare worker is used to open a websocket connection between the client and a durable object.
+- The durable object answers push/pull requests from the client.
+- The events are stored in a D1 SQLite database with a table for each store instance following the pattern `eventlog_${PERSISTENCE_FORMAT_VERSION}_${storeId}` where `PERSISTENCE_FORMAT_VERSION` is a number that is incremented whenever the `sync-cf` internal storage format changes.
+
+## Local development
+
+You can run the sync backend locally by running `wrangler dev` (e.g. take a look at the `todomvc-sync-cf` example). The local D1 database can be found in `.wrangler/state/d1/miniflare-D1DatabaseObject/XXX.sqlite`.
+
+# [Build your own sync provider](https://docs.livestore.dev/reference/syncing/sync-provider/custom/)
+
+## Overview
+
+It's very straightforward to implement your own sync provider. A sync provider implementation needs to do the following:
+
+## Client-side
+
+Implement the `SyncBackend` interface (running in the client) which describes the protocol for syncing events between the client and the server.
+
+```ts
+// Slightly simplified API (see packages/@livestore/common/src/sync/sync.ts for the full API)
+export type SyncBackend = {
+  pull: (cursor: EventSequenceNumber) => Stream<{ batch: LiveStoreEvent[] }, InvalidPullError>
+  push: (batch: LiveStoreEvent[]) => Effect<void, InvalidPushError>
+}
+
+// my-sync-backend.ts
+const makeMySyncBackend = (args: { /* ... */ }) => {
+  return {
+    pull: (cursor) => {
+      // ...
+    },
+    push: (batch) => {
+      // ...
+    }
+  }
+}
+
+// my-app.ts
+const adapter = makeAdapter({
+  sync: {
+    backend: makeMySyncBackend({ /* ... */ })
+  }
+})
+```
+
+The actual implementation of those methods is left to the developer and mostly depends on the network protocol used to communicate between the client and the server.
+
+Ideally this implementation considers the following:
+
+- Network connectivity (offline, unstable connection, etc.)
+- Ordering of events in case of out-of-order delivery
+- Backoff and retry logic
+
+## Server-side
+
+Implement the actual sync backend protocol (running in the server). At minimum this sync backend needs to do the following:
+
+  - For client `push` requests:
+    - Validate the batch of events
+      - Ensure the batch sequence numbers are in ascending order and larger than the sync backend head
+      - Further validation checks (e.g. schema-aware payload validation)
+    - Persist the events in the event store (implying a new sync backend head equal to the sequence number of the pushed last event)
+    - Return a success response
+    - It's important that the server only processes one push request at a time to ensure a total ordering of events.
+
+  - For client `pull` requests:
+    - Validate the cursor
+    - Query the events from the database
+    - Return the events to the client
+    - This can be done in a batch or streamed to the client
+    - `pull` requests can be handled in parallel by the server
+
+## General recommendations
+
+It's recommended to study the existing sync backend implementations for inspiration.
+
+# [ElectricSQL](https://docs.livestore.dev/reference/syncing/sync-provider/electricsql/)
+
+## Overview
+
+## Example
+
+See the [todomvc-sync-electric](https://github.com/livestorejs/livestore/tree/main/examples/src/web-todomvc-sync-electric) example.
+
+## How the sync provider works
+
+The initial version of the ElectricSQL sync provider will use the server-side Postgres DB as a store for the mutation event history.
+
+Events are stored in a table following the pattern `eventlog_${PERSISTENCE_FORMAT_VERSION}_${storeId}` where `PERSISTENCE_FORMAT_VERSION` is a number that is incremented whenever the `sync-electric` internal storage format changes.
+
+## F.A.Q.
+
+### Can I use my existing Postgres database with the sync provider?
+
+Unless the database is already modelled as a eventlog following the `@livestore/sync-electric` storage format, you won't be able to easily use your existing database with this sync backend implementation.
+
+We might support this use case in the future, you can follow the progress [here](https://github.com/livestorejs/livestore/issues/286). Please share any feedback you have on this use case there.
+
+### Why do I need my own API endpoint in front of the ElectricSQL server?
+
+The API endpoint is used to proxy pull/push requests to the ElectricSQL server in order to implement any custom logic you might need, e.g. auth, rate limiting, etc.
+
+# [S2](https://docs.livestore.dev/reference/syncing/sync-provider/s2/)
+
+## Overview
+
+Syncing provider for [S2](https://s2.dev/) is planned.
+
