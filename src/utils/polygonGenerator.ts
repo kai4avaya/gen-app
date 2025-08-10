@@ -10,9 +10,6 @@ export interface PolygonConfig {
     top: string;
     left: string;
   };
-  // The base points (0-100 space) used to generate this polygon
-  // Keeping this enables concentric/inner shapes derived from the same base.
-  basePoints: number[][];
 }
 
 // Generate random number within range
@@ -29,31 +26,6 @@ const generatePolygonPoints = (basePoints: number[][], variation: number = 5): s
   });
   
   return `polygon(${randomizedPoints.join(', ')})`;
-};
-
-// Move each vertex towards the polygon centroid by a ratio (0..1)
-const insetPolygon = (points: number[][], ratio: number): number[][] => {
-  const cx = points.reduce((acc, [x]) => acc + x, 0) / points.length;
-  const cy = points.reduce((acc, [, y]) => acc + y, 0) / points.length;
-  return points.map(([x, y]) => [cx + (x - cx) * (1 - ratio), cy + (y - cy) * (1 - ratio)]);
-};
-
-// Export concentric clip-paths using the same base shape
-export const generateConcentricClipPaths = (
-  basePoints: number[][],
-  levels: number = 3,
-  variation: number = 3,
-  insetStep: number = 0.08
-): string[] => {
-  const clips: string[] = [];
-  let points = basePoints.map(([x, y]) => [x, y]);
-  for (let i = 0; i < levels; i++) {
-    // Slightly reduce noise deeper inside for cleaner inner silhouette
-    const v = Math.max(0, variation - i);
-    clips.push(generatePolygonPoints(points, v));
-    points = insetPolygon(points, insetStep);
-  }
-  return clips;
 };
 
 // Predefined polygon base shapes
@@ -82,8 +54,7 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(-5, 5)}%`,
           left: `${randomInRange(-5, 5)}%`
-  },
-  basePoints: baseShape
+        }
       };
       break;
       
@@ -97,8 +68,7 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(5, 15)}%`,
           left: `${randomInRange(5, 15)}%`
-  },
-  basePoints: baseShape
+        }
       };
       break;
       
@@ -112,8 +82,7 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
         position: {
           top: `${randomInRange(15, 25)}%`,
           left: `${randomInRange(15, 25)}%`
-  },
-  basePoints: baseShape
+        }
       };
       break;
   }
