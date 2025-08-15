@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { useStore } from '@livestore/react'
+import { queryDb } from '@livestore/livestore'
 import { events } from '../../livestore/schema'
+import { tables } from '../../livestore/schema'
+import { publishHtml } from '../../stream/bus'
 import SettingsModal from '../SettingsModal/SettingsModal'
 import ChatModal from '../ChatModal/ChatModal'
 
@@ -10,15 +13,44 @@ export type UndoRedoToolbarProps = {
   canRedo: boolean
   undoNodeId?: string
   redoNodeId?: string
+  // Optional: when provided, HTML selections will be moved on undo/redo
+  pageId?: string
+  // Optional: used to clear the live buffer so iframe shows persisted selection
+  streamId?: string
   onThemeChange?: (isDark: boolean) => void
   onToggleHideUnfocused?: (hide: boolean) => void
+  onChatOpen?: () => void
 }
 
-const UndoRedoToolbar: React.FC<UndoRedoToolbarProps> = ({ canUndo, canRedo, undoNodeId, redoNodeId, onThemeChange, onToggleHideUnfocused }) => {
+const UndoRedoToolbar: React.FC<UndoRedoToolbarProps> = ({ canUndo, canRedo, undoNodeId, redoNodeId, pageId, streamId, onThemeChange, onToggleHideUnfocused, onChatOpen }) => {
   const { store } = useStore()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
   const [hideUnfocused, setHideUnfocused] = useState(false)
+
+  // Query HTML revisions and current selection (if pageId provided)
+  const selections$ = useMemo(() => pageId ? queryDb(
+    tables.htmlSelections.where({ pageId }).orderBy('updatedAt', 'desc'),
+    { label: `toolbar-htmlSelections-${pageId}` }
+  ) : null, [pageId])
+  const pages$ = useMemo(() => pageId ? queryDb(
+    tables.htmlPages.where({ pageId }).orderBy('updatedAt', 'desc'),
+    { label: `toolbar-htmlPages-${pageId}` }
+  ) : null, [pageId])
+  const selections = selections$ ? store.useQuery(selections$) : []
+  const pages = pages$ ? store.useQuery(pages$) : []
+  const selectedUpdatedAt = selections[0]?.selectedUpdatedAt as number | undefined
+  const currentIndex = selectedUpdatedAt ? pages.findIndex(p => p.updatedAt === selectedUpdatedAt) : 0
+
+  const movePointer = (nextIndex: number) => {
+    if (!pageId) return
+    if (nextIndex < 0 || nextIndex >= pages.length) return
+    const target = pages[nextIndex]
+    if (!target) return
+    // Clear live buffer so iframe reflects persisted selection immediately
+    if (streamId) publishHtml(streamId, { text: '__RESET__' })
+    store.commit((events as any).htmlSelectionSet({ pageId, selectedUpdatedAt: target.updatedAt, updatedAt: Date.now() }))
+  }
 
   return (
     <>
@@ -47,6 +79,8 @@ const UndoRedoToolbar: React.FC<UndoRedoToolbarProps> = ({ canUndo, canRedo, und
               console.log(`Undo clicked: removing node id=${undoNodeId}`)
               if (!undoNodeId) return
               store.commit((events as any).uiNodeRemoved({ id: undoNodeId, timestamp: Date.now() }))
+              // Also move HTML selection pointer back if available
+              if (pageId && pages.length) movePointer((currentIndex ?? 0) + 1)
             }}
             sx={(theme) => ({ color: theme.palette.text.primary })}
           >
@@ -66,6 +100,8 @@ const UndoRedoToolbar: React.FC<UndoRedoToolbarProps> = ({ canUndo, canRedo, und
               console.log(`Redo clicked: re-adding node id=${redoNodeId}`)
               if (!redoNodeId) return
               store.commit((events as any).uiNodeReadded({ id: redoNodeId, timestamp: Date.now() }))
+              // Also move HTML selection pointer forward if available
+              if (pageId && pages.length) movePointer(Math.max((currentIndex ?? pages.length) - 1, 0))
             }}
             sx={(theme) => ({ color: theme.palette.text.primary })}
           >
@@ -98,7 +134,10 @@ const UndoRedoToolbar: React.FC<UndoRedoToolbarProps> = ({ canUndo, canRedo, und
       <Tooltip title="Chat">
         <IconButton
           size="small"
-          onClick={() => setChatOpen(true)}
+          onClick={() => {
+            setChatOpen(true)
+            onChatOpen?.()
+          }}
           sx={(theme) => ({ color: theme.palette.text.primary })}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

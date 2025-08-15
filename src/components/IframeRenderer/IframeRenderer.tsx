@@ -1,27 +1,52 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from '@livestore/react'
 import { queryDb } from '@livestore/livestore'
-import { tables } from '../../livestore/schema'
+import { tables, events } from '../../livestore/schema'
 import { subscribeHtml } from '../../stream/bus'
 
 export type IframeRendererProps = {
   streamId: string
   pageId: string
   height?: number | string
+  clearIframe?: boolean
 }
 
-const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, height = '60vh' }) => {
+const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, height = '60vh', clearIframe = false }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [buffer, setBuffer] = useState('')
   const { store } = useStore()
 
-  // Query last committed page (optional: latest by updatedAt)
+  // Query selection pointer history (latest row wins)
+  const selection$ = useMemo(() => queryDb(
+    tables.htmlSelections.where({ pageId }).orderBy('updatedAt', 'desc'),
+    { label: `htmlSelections-${pageId}` }
+  ), [pageId])
+  const selections = store.useQuery(selection$)
+  const selectedUpdatedAt = selections[0]?.selectedUpdatedAt as number | undefined
+
+  // Query last committed pages for this pageId
   const pages$ = useMemo(() => queryDb(
     tables.htmlPages.where({ pageId }).orderBy('updatedAt', 'desc'),
     { label: `htmlPages-${pageId}` }
   ), [pageId])
   const pages = store.useQuery(pages$)
-  const latest = pages[0]
+
+  // Ensure an initial empty state is part of history for this pageId
+  useEffect(() => {
+    if (pages.length === 0) {
+      try {
+        store.commit(events.htmlPageCommitted({
+          pageId,
+          html: '',
+          updatedAt: Date.now(),
+        }))
+      } catch {}
+    }
+  }, [pages.length, pageId, store])
+
+  // Choose the page based on pointer if present, else latest
+  const pointed = selectedUpdatedAt ? pages.find(p => p.updatedAt === selectedUpdatedAt) : undefined
+  const latest = pointed ?? pages[0]
   const hasContent = !!buffer || !!latest?.html
 
   // Initialize iframe shell once (transparent background)
@@ -32,9 +57,31 @@ const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, heigh
     if (!doc) return
     if (doc.body?.childNodes.length) return
     doc.open()
-    doc.write('<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:transparent;"><div id="app-root"></div></body></html>')
+  doc.write('<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:transparent;overflow:auto;"><div id="app-root"></div></body></html>')
     doc.close()
   }, [])
+
+  // Relay dblclicks from inside the iframe to the parent (capture phase)
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+    const doc = iframe.contentDocument
+    if (!doc) return
+    const handler = (e: MouseEvent) => {
+      // Do not disrupt iframe normal behavior; only notify parent
+      try {
+        window.parent?.postMessage({
+          __app: 'self-gen-app',
+          type: 'iframe-dblclick',
+          pageId,
+          x: e.clientX,
+          y: e.clientY,
+        }, '*')
+      } catch {}
+    }
+    doc.addEventListener('dblclick', handler, true)
+    return () => doc.removeEventListener('dblclick', handler, true)
+  }, [pageId])
 
   // Subscribe to streaming chunks; patch iframe progressively
   useEffect(() => {
@@ -81,9 +128,22 @@ const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, heigh
     return () => { if (rafId) cancelAnimationFrame(rafId) }
   }, [buffer])
 
+  // Clear iframe content when clearIframe is true
+  useEffect(() => {
+    if (clearIframe) {
+      setBuffer('')
+      const iframe = iframeRef.current
+      if (!iframe) return
+      const doc = iframe.contentDocument
+      if (!doc) return
+      const root = doc.getElementById('app-root') || doc.body
+      if (root) root.innerHTML = ''
+    }
+  }, [clearIframe])
+
   // Apply last committed HTML when stream buffer is empty (e.g., on load)
   useEffect(() => {
-    if (buffer) return // prefer live stream
+    if (buffer || clearIframe) return // prefer live stream or clear state
     const iframe = iframeRef.current
     if (!iframe) return
     const doc = iframe.contentDocument
@@ -96,7 +156,7 @@ const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, heigh
       const bodyInner = m ? m[1] : html
       root.innerHTML = bodyInner
     } catch {}
-  }, [latest, buffer])
+  }, [latest, buffer, clearIframe])
 
   return (
     <iframe
@@ -107,7 +167,7 @@ const IframeRenderer: React.FC<IframeRendererProps> = ({ streamId, pageId, heigh
         border: 'none',
         background: 'transparent',
         opacity: hasContent ? 1 : 0,
-        pointerEvents: 'none',
+  pointerEvents: 'auto',
         zIndex: 0,
       }}
     />

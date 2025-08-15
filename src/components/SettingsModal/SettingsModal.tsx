@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Modal, Typography, Switch, FormControlLabel, TextField, Checkbox, Stack, Divider } from '@mui/material'
+import { Box, Modal, Typography, Switch, FormControlLabel, TextField, Checkbox, Stack, Divider, Link } from '@mui/material'
 
 export type SettingsModalProps = {
   open: boolean
@@ -81,14 +81,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onThemeCha
           
           <Divider />
           
-          <TextField
-            label="OpenRouter API Key"
-            type="password"
-            value={settings.openRouterKey}
-            onChange={(e) => handleChange('openRouterKey', e.target.value)}
-            size="small"
-            fullWidth
-          />
+          <Box>
+            <TextField
+              label="OpenRouter API Key"
+              type="password"
+              value={settings.openRouterKey}
+              onChange={(e) => handleChange('openRouterKey', e.target.value)}
+              size="small"
+              fullWidth
+            />
+            <Link
+              href="https://openrouter.ai/"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ fontSize: '0.875rem', mt: 0.5, display: 'block' }}
+            >
+              Get your API key at openrouter.ai
+            </Link>
+          </Box>
           
           <TextField
             label="Model Name"

@@ -7,6 +7,15 @@ export const events = {
     name: 'textTyped',
     schema: Schema.String,
   }),
+  // User selected which HTML revision is active for a page (pointer-based undo/redo)
+  htmlSelectionSet: Events.synced({
+    name: 'htmlSelectionSet',
+    schema: Schema.Struct({
+      pageId: Schema.String,
+      selectedUpdatedAt: Schema.Number, // points to htmlPages.updatedAt
+      updatedAt: Schema.Number,
+    }),
+  }),
   // Generic UI node created (HTML element added)
   uiNodeCreated: Events.synced({
     name: 'uiNodeCreated',
@@ -99,6 +108,16 @@ export const tables = {
       updatedAt: State.SQLite.integer(),
     },
   }),
+  // Pointer history: which htmlPages.updatedAt is currently selected per pageId (append-only)
+  htmlSelections: State.SQLite.table({
+    name: 'htmlSelections',
+    columns: {
+      id: State.SQLite.text({ primaryKey: true }),
+      pageId: State.SQLite.text(),
+      selectedUpdatedAt: State.SQLite.integer(),
+      updatedAt: State.SQLite.integer(),
+    },
+  }),
 }
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -107,6 +126,8 @@ const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 const materializers = State.SQLite.materializers(events, {
   // Apply textTyped events to log table
   textTyped: (text) => tables.inputLog.insert({ id: genId(), content: text, timestamp: Date.now() }),
+  htmlSelectionSet: (payload) =>
+    tables.htmlSelections.insert({ id: genId(), pageId: payload.pageId, selectedUpdatedAt: payload.selectedUpdatedAt, updatedAt: payload.updatedAt }),
   uiNodeCreated: (payload) =>
     tables.nodes.insert({ id: payload.id, tag: payload.tag, x: payload.x, y: payload.y, parentId: payload.parentId, orderIndex: payload.orderIndex, createdAt: payload.createdAt }),
   uiNodeRemoved: (payload) =>
@@ -114,7 +135,11 @@ const materializers = State.SQLite.materializers(events, {
   uiNodeReadded: (payload) =>
     tables.nodeReaddLog.insert({ id: genId(), nodeId: payload.id, timestamp: payload.timestamp }),
   htmlPageCommitted: (payload) =>
-    tables.htmlPages.insert({ id: genId(), pageId: payload.pageId, html: payload.html, updatedAt: payload.updatedAt }),
+    [
+      tables.htmlPages.insert({ id: genId(), pageId: payload.pageId, html: payload.html, updatedAt: payload.updatedAt }),
+      // By default, newly committed HTML becomes the selected revision
+      tables.htmlSelections.insert({ id: genId(), pageId: payload.pageId, selectedUpdatedAt: payload.updatedAt, updatedAt: Date.now() }),
+    ],
 })
 
 const state = State.SQLite.makeState({ tables, materializers })

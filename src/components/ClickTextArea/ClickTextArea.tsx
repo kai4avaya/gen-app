@@ -6,6 +6,7 @@ import { runAgent } from '../../agents/agent'
 
 import { streamHtmlToLiveStore } from '../../utils/llmStreamHtml'
 import { SYSTEM_PROMPT_HTML } from '../../agents/prompts/prompt'
+import AILoader from '../AILoader/AILoader'
 
 export type ClickTextAreaProps = {
   visible: boolean
@@ -24,11 +25,26 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
   const theme = useTheme()
   const [value, setValue] = useState('')
   const [isFocused, setIsFocused] = useState(false)
+  const [isAIThinking, setIsAIThinking] = useState(false)
   const hasTypedRef = useRef(false)
   const ref = useRef<HTMLTextAreaElement | null>(null)
   const agentAbortRef = useRef<AbortController | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [computedWidth, setComputedWidth] = useState<number>(() => Math.min(window.innerWidth * 0.7, 900))
+  const [showConfigAlert, setShowConfigAlert] = useState(false)
+
+  // DIAGNOSTICS: log component mount and props
+  useEffect(() => {
+    console.log('[ClickTextArea] Component mounted with props:', { visible, x, y, hideUnfocused, isFocused });
+    return () => {
+      console.log('[ClickTextArea] Component unmounted');
+    };
+  }, []);
+
+  // DIAGNOSTICS: log prop changes
+  useEffect(() => {
+    console.log('[ClickTextArea] Props changed:', { visible, x, y, hideUnfocused, isFocused });
+  }, [visible, x, y, hideUnfocused, isFocused]);
 
   // Focus the textarea when it becomes visible or moves
   useEffect(() => {
@@ -100,14 +116,18 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
     if (!apiKey) return
 
     let aborted = false
+    let isMounted = true 
     const handler = setTimeout(() => {
-      if (aborted) return
+      if (aborted || !isMounted) return
       if (value.trim().split(/\s+/).length < 3) return
 
   // Abort any in-flight request
       agentAbortRef.current?.abort()
       const controller = new AbortController()
       agentAbortRef.current = controller
+
+      // Set AI thinking state to true when starting
+      setIsAIThinking(true)
 
       const SIMPLE_HTML = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>App</title>\n</head>\n<body>\n</body>\n</html>`
   const SYSTEM_PROMPT = SYSTEM_PROMPT_HTML
@@ -122,12 +142,30 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
         agentAbortRef,
         setErrorMsg,
         value,
+      }).finally(() => {
+        // Set AI thinking state to false when done
+        // setIsAIThinking(false)
+        if (isMounted && !aborted) {
+          setIsAIThinking(false)
+        }
       })
-    }, 400) // 400ms pause after last keystroke
+      return () => {
+        aborted = true
+        isMounted = false
+        clearTimeout(handler)
+        // Clean up any pending requests
+        agentAbortRef.current?.abort()
+      }
+    }, 400)
 
-    return () => { aborted = true; clearTimeout(handler) }
+    return () => {
+      aborted = true
+      isMounted = false
+      clearTimeout(handler)
+    }
   }, [value, visible])
 
+  console.log('[ClickTextArea] Rendering decision:', { visible, hideUnfocused, isFocused, valueLength: value.trim().length, willRender: visible && !(hideUnfocused && !isFocused && value.trim()) });
   if (!visible || (hideUnfocused && !isFocused && value.trim())) return null
 
   return (
@@ -142,6 +180,18 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
           if (!hasTypedRef.current && next.trim().length > 0) {
             hasTypedRef.current = true
             onFirstType?.()
+            // Check for missing config when user starts typing
+            const settingsRaw = localStorage.getItem('app-settings')
+            let apiKey = ''
+            let modelName = ''
+            try {
+              const parsed = settingsRaw ? JSON.parse(settingsRaw) : null
+              apiKey = parsed?.openRouterKey ?? ''
+              modelName = parsed?.modelName ?? ''
+            } catch {}
+            if (!apiKey || !modelName) {
+              setShowConfigAlert(true)
+            }
           }
           // Track every change via LiveStore event
           store.commit(events.textTyped(next))
@@ -160,6 +210,7 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
         style={style}
         autoFocus
       />
+      <AILoader visible={isAIThinking} />
       <Snackbar
         open={!!errorMsg}
         autoHideDuration={4000}
@@ -173,6 +224,21 @@ const ClickTextArea: React.FC<ClickTextAreaProps> = ({ visible, x, y, fontSizeRe
           sx={{ width: '100%' }}
         >
           {errorMsg}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={showConfigAlert}
+        autoHideDuration={6000}
+        onClose={() => setShowConfigAlert(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          severity="warning"
+          variant="filled"
+          onClose={() => setShowConfigAlert(false)}
+          sx={{ width: '100%' }}
+        >
+          Please configure your OpenRouter API key and model preference in settings
         </Alert>
       </Snackbar>
     </>

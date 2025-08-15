@@ -28,12 +28,27 @@ const generatePolygonPoints = (basePoints: number[][], variation: number = 5): s
   return `polygon(${randomizedPoints.join(', ')})`;
 };
 
-// Predefined polygon base shapes
+// Predefined polygon base shapes (asymmetric, room-like bevels)
+// These emphasize more vertical edges and a narrower top than bottom to hint
+// at an interior "room" with subtle perspective. They are intentionally
+// non‑symmetric so each randomization feels organic.
 const polygonShapes = {
-  octagon: [[20, 0], [80, 0], [100, 20], [100, 80], [80, 100], [20, 100], [0, 80], [0, 20]],
-  hexagon: [[25, 0], [75, 0], [100, 25], [100, 75], [75, 100], [25, 100], [0, 75], [0, 25]],
-  diamond: [[30, 0], [70, 0], [100, 30], [100, 70], [70, 100], [30, 100], [0, 70], [0, 30]],
-  irregular: [[15, 5], [85, 0], [95, 25], [100, 75], [85, 95], [25, 100], [5, 80], [0, 25]]
+  // Tall mouth with nearly vertical sides
+  tallMouth: [
+    [44, 5], [58, 6], [90, 26], [92, 64], [60, 95], [36, 94], [11, 70], [10, 32]
+  ],
+  // Slightly tilted interior aperture with beveled corners
+  beveledRoom: [
+    [41, 7], [63, 8], [88, 30], [90, 67], [62, 93], [33, 92], [12, 72], [12, 34]
+  ],
+  // Irregular, vertical leaning shape
+  leanRoom: [
+    [46, 5], [66, 7], [92, 29], [94, 66], [63, 97], [31, 95], [8, 71], [9, 33]
+  ],
+  // Narrower top, wider base, asymmetric sides
+  flareBase: [
+    [43, 6], [59, 7], [86, 27], [91, 65], [62, 96], [35, 96], [12, 73], [11, 31]
+  ]
 };
 
 export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inner'): PolygonConfig => {
@@ -46,42 +61,43 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
   switch (type) {
     case 'primary':
       config = {
-        clipPath: generatePolygonPoints(baseShape, 8),
-        rotation: randomInRange(-20, 20),
-        scale: randomInRange(1.05, 1.15),
-        opacity: randomInRange(0.85, 0.95),
-        animationDelay: randomInRange(0, 2),
+        clipPath: generatePolygonPoints(baseShape, 4.0),
+        rotation: randomInRange(-2.2, 2.2),
+        scale: randomInRange(1.01, 1.05),
+        opacity: randomInRange(0.88, 0.96),
+        animationDelay: randomInRange(0, 1.2),
         position: {
-          top: `${randomInRange(-5, 5)}%`,
-          left: `${randomInRange(-5, 5)}%`
+          // Center-based with tiny random offset to avoid symmetry
+          top: `calc(50% + ${randomInRange(-2.0, 1.6).toFixed(1)}%)`,
+          left: `calc(50% + ${randomInRange(-1.6, 2.0).toFixed(1)}%)`
         }
       };
       break;
       
     case 'secondary':
       config = {
-        clipPath: generatePolygonPoints(baseShape, 6),
-        rotation: randomInRange(-30, 30),
-        scale: randomInRange(0.9, 1.1),
-        opacity: randomInRange(0.6, 0.8),
-        animationDelay: randomInRange(0, 5),
+        clipPath: generatePolygonPoints(baseShape, 3.5),
+        rotation: randomInRange(-4.5, 4.5),
+        scale: randomInRange(0.99, 1.02),
+        opacity: randomInRange(0.18, 0.3),
+        animationDelay: randomInRange(0, 4),
         position: {
-          top: `${randomInRange(5, 15)}%`,
-          left: `${randomInRange(5, 15)}%`
+          top: `calc(50% + ${randomInRange(-1.6, 1.6).toFixed(1)}%)`,
+          left: `calc(50% + ${randomInRange(-1.6, 1.6).toFixed(1)}%)`
         }
       };
       break;
       
     case 'inner':
       config = {
-        clipPath: generatePolygonPoints(baseShape, 4),
-        rotation: randomInRange(-15, 15),
-        scale: randomInRange(0.95, 1.05),
-        opacity: randomInRange(0.75, 0.85),
+        clipPath: generatePolygonPoints(baseShape, 2.2),
+        rotation: randomInRange(-2.8, 2.8),
+        scale: randomInRange(0.985, 1.015),
+        opacity: randomInRange(0.74, 0.86),
         animationDelay: randomInRange(0, 3),
         position: {
-          top: `${randomInRange(15, 25)}%`,
-          left: `${randomInRange(15, 25)}%`
+          top: `calc(50% + ${randomInRange(-1.2, 1.2).toFixed(1)}%)`,
+          left: `calc(50% + ${randomInRange(-1.2, 1.2).toFixed(1)}%)`
         }
       };
       break;
@@ -91,20 +107,32 @@ export const generateRandomPolygonConfig = (type: 'primary' | 'secondary' | 'inn
 };
 
 export const generateRandomGradient = (isDark: boolean = false): string => {
+  // Layered gradients to create subtle interior wall shading with a faux light source
+  // Softer than before to reduce stacky look and support the photo backdrop.
   const lightGradients = [
-    'linear-gradient(135deg, #ffffff 0%, #f0f0f0 25%, #e0e0e0 50%, #d0d0d0 75%, #c0c0c0 100%)',
-    'linear-gradient(225deg, #f8f8f8 0%, #e8e8e8 30%, #d8d8d8 60%, #c8c8c8 100%)',
-    'linear-gradient(45deg, #ffffff 0%, #e5e5e5 40%, #d0d0d0 70%, #c0c0c0 100%)',
-    'radial-gradient(ellipse at center, #ffffff 0%, #f0f0f0 40%, #e0e0e0 70%, #d0d0d0 100%)',
-    'linear-gradient(315deg, #f8f8f8 0%, #e0e0e0 35%, #d0d0d0 65%, #c8c8c8 100%)'
+    [
+      'radial-gradient(ellipse at 55% 48%, rgba(255,255,255,0.75) 0%, rgba(245,245,245,0.45) 40%, rgba(230,230,230,0.22) 70%, rgba(220,220,220,0.10) 100%)',
+      'linear-gradient(180deg, rgba(245,245,245,0.35) 0%, rgba(240,240,240,0.20) 50%, rgba(235,235,235,0.10) 100%)',
+      'linear-gradient(100deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 55%)'
+    ].join(', '),
+    [
+      'radial-gradient(ellipse at 52% 46%, rgba(255,255,255,0.8) 0%, rgba(245,245,245,0.48) 38%, rgba(230,230,230,0.22) 72%, rgba(220,220,220,0.1) 100%)',
+      'linear-gradient(210deg, rgba(250,250,250,0.28) 0%, rgba(235,235,235,0.16) 65%, rgba(220,220,220,0.06) 100%)',
+      'linear-gradient(350deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 55%)'
+    ].join(', ')
   ];
   
   const darkGradients = [
-    'linear-gradient(135deg, #505050 0%, #404040 25%, #353535 50%, #2a2a2a 75%, #1e1e1e 100%)',
-    'linear-gradient(225deg, #454545 0%, #3a3a3a 30%, #303030 60%, #252525 100%)',
-    'linear-gradient(45deg, #505050 0%, #353535 40%, #2a2a2a 70%, #1e1e1e 100%)',
-    'radial-gradient(ellipse at center, #505050 0%, #404040 40%, #353535 70%, #2a2a2a 100%)',
-    'linear-gradient(315deg, #454545 0%, #353535 35%, #2a2a2a 65%, #252525 100%)'
+    [
+      'radial-gradient(ellipse at 55% 48%, rgba(120,120,120,0.28) 0%, rgba(90,90,90,0.20) 45%, rgba(70,70,70,0.12) 75%, rgba(50,50,50,0.06) 100%)',
+      'linear-gradient(185deg, rgba(150,150,150,0.16) 0%, rgba(100,100,100,0.12) 55%, rgba(60,60,60,0.05) 100%)',
+      'linear-gradient(20deg, rgba(180,180,180,0.10) 0%, rgba(180,180,180,0) 60%)'
+    ].join(', '),
+    [
+      'radial-gradient(ellipse at 52% 46%, rgba(130,130,130,0.28) 0%, rgba(95,95,95,0.20) 40%, rgba(70,70,70,0.12) 75%, rgba(50,50,50,0.06) 100%)',
+      'linear-gradient(210deg, rgba(160,160,160,0.14) 0%, rgba(110,110,110,0.10) 60%, rgba(70,70,70,0.05) 100%)',
+      'linear-gradient(340deg, rgba(185,185,185,0.10) 0%, rgba(185,185,185,0) 55%)'
+    ].join(', ')
   ];
   
   const gradientTypes = isDark ? darkGradients : lightGradients;
